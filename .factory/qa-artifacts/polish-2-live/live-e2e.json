@@ -1,0 +1,16 @@
+{
+  "landing": 0,
+  "demoAxe": 0,
+  "routeResults": {
+    "/board": 0,
+    "/privacy": 0,
+    "/terms": 0
+  },
+  "notFoundAxe": 0,
+  "focusMoved": true,
+  "landingOverflow": false,
+  "demoOverflow": false,
+  "offlineShown": true,
+  "errors": [],
+  "demoEgress": []
+}
