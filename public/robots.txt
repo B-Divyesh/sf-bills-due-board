@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://bills-due-board.sociobot.in/sitemap.xml

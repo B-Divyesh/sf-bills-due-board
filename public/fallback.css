@@ -1,0 +1,5 @@
+body { margin: 0; background: #f4eedf; color: #18241f; font: 18px/1.5 Arial, sans-serif; display: grid; min-height: 100vh; place-items: center; }
+main { max-width: 34rem; margin: 20px; padding: 32px; border: 2px solid; background: #fff9ed; box-shadow: 12px 12px 0 #18241f; }
+h1 { font: 700 3rem/1.05 Georgia, serif; margin: 4px 0 16px; }
+a { color: #214bc0; font-weight: 700; }
+a:focus-visible { outline: 3px solid #a96300; outline-offset: 3px; }
