@@ -128,6 +128,71 @@ test('demo uses no analytics or third-party scripts and sends no bill records aw
   expect(scripts.every((url) => new URL(url).origin === 'http://127.0.0.1:4173')).toBe(true);
 });
 
+test('requests bill details but no bank credentials @claim:bank-credentials', async ({ page }) => {
+  await page.goto('/demo');
+  await expect(page.getByText('Harbor Electric')).toBeVisible();
+
+  const controls = await page.locator('input, select, textarea').evaluateAll((elements) => elements.map((element) => {
+    const control = element as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+    const label = control.id ? document.querySelector(`label[for="${CSS.escape(control.id)}"]`)?.textContent?.trim() ?? '' : '';
+    return { name: control.getAttribute('name') ?? '', type: control.getAttribute('type') ?? control.tagName.toLowerCase(), label };
+  }));
+  const requestedLabels = controls.map((control) => control.label).filter(Boolean);
+  expect(requestedLabels).toEqual(['Vendor', 'Amount in USD', 'Due date', 'Category', 'Attachment link', 'Notes', 'Paid date']);
+
+  const credentialPattern = /bank|routing|account|iban|swift|card|cvv|pin|password/i;
+  expect(controls.filter((control) => credentialPattern.test(`${control.name} ${control.type} ${control.label}`))).toEqual([]);
+});
+
+test('paid confirmation stays local and cannot initiate a payment @claim:payment-initiation', async ({ page }) => {
+  await page.addInitScript(() => {
+    (window as Window & { __paymentApiCalls?: number }).__paymentApiCalls = 0;
+    Object.defineProperty(window, 'PaymentRequest', {
+      configurable: true,
+      value: class {
+        constructor() {
+          (window as Window & { __paymentApiCalls?: number }).__paymentApiCalls = ((window as Window & { __paymentApiCalls?: number }).__paymentApiCalls ?? 0) + 1;
+          throw new Error('PaymentRequest must not be used by Bills Due Board.');
+        }
+      },
+    });
+  });
+  await page.goto('/demo');
+  await expect(page.getByText('Harbor Electric')).toBeVisible();
+
+  const actionRequests: string[] = [];
+  page.on('request', (request) => actionRequests.push(request.url()));
+  const row = page.locator('[data-bill-id]').filter({ hasText: 'Harbor Electric' });
+  await row.getByRole('button', { name: 'Mark paid' }).click();
+  await expect(page.getByText('This records your confirmation only. It does not move money.')).toBeVisible();
+  await page.getByRole('button', { name: 'Confirm paid' }).click();
+  await expect(page.getByText('Harbor Electric marked paid.')).toBeVisible();
+  await page.getByText(/Paid history/).click();
+  await expect(page.locator('.paid-row').filter({ hasText: 'Harbor Electric' })).toBeVisible();
+
+  expect(actionRequests).toEqual([]);
+  expect(await page.evaluate(() => (window as Window & { __paymentApiCalls?: number }).__paymentApiCalls)).toBe(0);
+});
+
+test('keeps edits local without automatic account sync @claim:account-sync', async ({ page }) => {
+  const crossOriginRequests: string[] = [];
+  const sockets: string[] = [];
+  page.on('request', (request) => {
+    if (new URL(request.url()).origin !== 'http://127.0.0.1:4173') crossOriginRequests.push(request.url());
+  });
+  page.on('websocket', (socket) => sockets.push(socket.url()));
+
+  await page.goto('/demo');
+  await expect(page.getByText('Harbor Electric')).toBeVisible();
+  await addBill(page, 'Local Paper Supply');
+  await page.waitForTimeout(750);
+  await page.reload();
+  await expect(page.getByText('Local Paper Supply')).toBeVisible();
+
+  expect(crossOriginRequests).toEqual([]);
+  expect(sockets).toEqual([]);
+});
+
 test('verifies a returned license and stores the result @claim:license-verify', async ({ page }) => {
   let verifyRequest = '';
   let verifyCount = 0;
