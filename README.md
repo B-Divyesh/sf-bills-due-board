@@ -2,7 +2,7 @@
 
 See every bill by due date, then confirm each payment.
 
-Bills Due Board is for solo operators who need a small payable queue beside their finance tool. It is a web app that keeps its bill records on this device. It is not an accounting ledger or payment service.
+Bills Due Board is for solo operators who need a short list of bills due beside their finance tool. It is a web app that keeps its bill records on this device. It is not an accounting ledger or payment service.
 
 Live site: <https://bills-due-board.sociobot.in>
 

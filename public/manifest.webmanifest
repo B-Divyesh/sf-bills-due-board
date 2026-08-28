@@ -1,8 +1,8 @@
 {
   "name": "Bills Due Board",
   "short_name": "Bills Due",
-  "description": "A private due-date queue for planned bills.",
-  "start_url": "/board?v=2",
+  "description": "A private list of planned bills by due date.",
+  "start_url": "/board?v=3",
   "scope": "/",
   "display": "standalone",
   "background_color": "#F4EEDF",

@@ -8,7 +8,7 @@ const appRoot = document.querySelector<HTMLDivElement>('#app');
 if (!appRoot) throw new Error('The app could not start. Reload this page.');
 const app = appRoot;
 
-const BUILD_ID = 'v1.0.4';
+const BUILD_ID = 'v1.0.5';
 const PRODUCT_SLUG = 'bills-due-board';
 const BUY_URL = `https://api.sociobot.in/api/v1/products/${PRODUCT_SLUG}/checkout`;
 const LICENSE_KEY = `sb_license:${PRODUCT_SLUG}`;
@@ -54,7 +54,7 @@ function routeMeta(path: string): void {
         : path === '/terms'
           ? 'Read the terms for using Bills Due Board and its one-time license.'
           : path === '/'
-            ? 'Keep planned bills in a private due-date queue, review the next cash week, and confirm each payment.'
+            ? 'List planned bills by due date, review the next cash week, and confirm each payment on this device.'
             : 'The requested Bills Due Board page was not found.';
   document.querySelector<HTMLMetaElement>('meta[name="description"]')?.setAttribute('content', description);
   document.querySelector<HTMLMetaElement>('meta[property="og:title"]')?.setAttribute('content', title);
@@ -82,7 +82,7 @@ function header(path: string, demo: boolean): string {
 
 function footer(): string {
   return `<footer class="site-footer"><div class="shell footer-row">
-    <div><strong>Bills Due Board</strong><p class="footer-note">A due-date queue for planned bills. Artwork is generated.</p></div>
+    <div><strong>Bills Due Board</strong><p class="footer-note">A list of planned bills by due date.</p></div>
     <div><div class="footer-links"><a href="/privacy" data-link>Privacy</a><a href="/terms" data-link>Terms</a><a href="https://sociobot.in" rel="external">Built by Param Factory <span class="sr-only">(external site)</span></a></div><p class="footer-note">${BUILD_ID} · Works offline</p></div>
   </div></footer>`;
 }
@@ -94,36 +94,36 @@ function landingPage(): string {
   return `<main id="main">
     <section class="hero"><div class="shell hero-grid">
       <div class="hero-copy">
-        <p class="eyebrow">A clear queue before the ledger</p>
+        <p class="eyebrow">Bills by due date</p>
         <h1 tabindex="-1">See every bill by due date</h1>
         <p>For solo operators who need one place to review bills and confirm each payment.</p>
         <div class="hero-actions"><a class="button primary" href="/demo" data-link>Try it with sample data</a><a class="button" href="/board" data-link>Add your first bill</a><span class="action-note">The sample opens a separate demo board.</span></div>
         <ul class="facts" aria-label="Product facts"><li>Works offline after the first visit</li><li>Records use encrypted browser storage</li><li>Free for 10 active bills</li></ul>
       </div>
       <figure class="hero-art">
-        <picture><source media="(max-width: 700px)" srcset="/assets/payment-horizon-960.webp"><img src="/assets/payment-horizon-1440.webp" width="1440" height="960" alt="Paper bill slips arranged around a circular seven-day planning wheel." fetchpriority="high" decoding="async"></picture>
-        <figcaption class="art-caption">Each slip joins the queue until you confirm payment.</figcaption>
+        <picture><source media="(max-width: 700px)" srcset="/assets/payment-horizon-960.webp"><img src="/assets/payment-horizon-1440.webp" width="1440" height="960" alt="An abstract seven-day calendar shows planned bills by their due dates." fetchpriority="high" decoding="async"></picture>
+        <figcaption class="art-caption">Each planned bill stays listed until you mark it paid.</figcaption>
       </figure>
     </div></section>
-    <section class="preview-section" aria-labelledby="preview-title"><div class="shell"><p class="eyebrow">The queue</p><h2 id="preview-title">Know what needs cash next</h2><p class="section-intro">The board sorts planned bills by date. Overdue items stay first until you mark them paid.</p>
+    <section class="preview-section" aria-labelledby="preview-title"><div class="shell"><h2 id="preview-title">Bills due in the next seven days</h2><p class="section-intro">The board sorts planned bills by date. Overdue items stay first until you mark them paid.</p>
       <div class="preview-board" aria-label="Sample due-date board"><div class="preview-rail">Next seven days<strong data-preview-total>${formatMoney(previewTotal)}</strong><p data-preview-count>${preview.length} planned ${preview.length === 1 ? 'bill' : 'bills'}</p></div><div class="preview-list">
         ${overdue ? `<div class="preview-row"><span class="preview-date">${escapeHtml(formatDate(overdue.dueDate))}</span><span><span class="preview-status">Overdue</span><br><strong>${escapeHtml(overdue.vendor)}</strong></span><strong>${formatMoney(overdue.amount)}</strong></div>` : ''}
         ${preview.map((bill) => `<div class="preview-row"><span class="preview-date">${escapeHtml(formatDate(bill.dueDate))}</span><span>${escapeHtml(bill.vendor)}</span><strong>${formatMoney(bill.amount)}</strong></div>`).join('')}
       </div></div>
     </div></section>
-    <section class="steps" aria-labelledby="steps-title"><div class="shell"><p class="eyebrow">How it works</p><h2 id="steps-title">Keep the payment decision visible</h2><div class="steps-grid">
+    <section class="steps" aria-labelledby="steps-title"><div class="shell"><h2 id="steps-title">How to track planned bills</h2><div class="steps-grid">
       <article class="step"><span class="step-number">01</span><h3>Add planned bills</h3><p>Type one bill or import a CSV file from your current tool.</p></article>
       <article class="step"><span class="step-number">02</span><h3>Review the cash week</h3><p>See the total due on each of the next seven days.</p></article>
       <article class="step"><span class="step-number">03</span><h3>Confirm payment</h3><p>Choose the paid date. The bill then moves into paid history.</p></article>
     </div></div></section>
-    <section class="boundaries" aria-labelledby="boundaries-title"><div class="shell two-column"><div><p class="eyebrow">Clear boundaries</p><h2 id="boundaries-title">A board, not a bank</h2><p>This is a planning record. Marking a bill paid does not move money or post to an accounting ledger.</p></div><ul class="not-list"><li>No bank credentials</li><li>No payment initiation</li><li>No tax or accounting advice</li><li>No automatic account sync</li></ul></div></section>
-    <section class="pricing" aria-labelledby="price-title"><div class="shell"><div class="price-sheet"><div><p class="eyebrow">One-time license</p><h2 id="price-title">Keep an unlimited active queue</h2><p>The free board holds 10 active bills. A license removes that limit. CSV import, export, offline use, and accessibility stay free.</p><p class="price">$19 <small>once</small></p></div><a class="button primary" href="${BUY_URL}">Buy a license</a></div></div></section>
+    <section class="boundaries" aria-labelledby="boundaries-title"><div class="shell two-column"><div><h2 id="boundaries-title">What this board does not do</h2><p>This is a planning record. Marking a bill paid does not move money or post to an accounting ledger.</p></div><ul class="not-list"><li>No bank credentials</li><li>No payment initiation</li><li>No tax or accounting advice</li><li>No automatic account sync</li></ul></div></section>
+    <section class="pricing" aria-labelledby="price-title"><div class="shell"><div class="price-sheet"><div><h2 id="price-title">Price and license</h2><p>The free board holds 10 active bills. A license removes that limit. CSV import, export, offline use, and accessibility stay free.</p><p class="price">$19 <small>once</small></p></div><a class="button primary" href="${BUY_URL}">Buy a license</a></div></div></section>
   </main>`;
 }
 
 function boardPage(demo: boolean): string {
   return `<main id="main" class="board-page"><div class="shell">
-    <div class="board-head"><div><p class="eyebrow">${demo ? 'Sample workspace' : 'Your private queue'}</p><h1 tabindex="-1">Plan bills. Confirm payments.</h1><p class="board-summary" id="board-summary">Loading your bills…</p></div>
+    <div class="board-head"><div><p class="eyebrow">${demo ? 'Sample workspace' : 'Your private bill list'}</p><h1 tabindex="-1">Plan bills. Confirm payments.</h1><p class="board-summary" id="board-summary">Loading your bills…</p></div>
       <div class="board-tools" id="board-tools" hidden>
         <button class="primary" type="button" id="add-bill">Add a bill</button>
         <button class="secondary" type="button" id="import-csv">Import CSV</button><input id="csv-import" type="file" accept=".csv,text/csv" aria-label="Choose a CSV file to import">
@@ -148,7 +148,7 @@ function termsPage(): string {
 }
 
 function notFoundPage(): string {
-  return `<main id="main" class="legal-page"><div class="shell"><p class="eyebrow">404 · outside the date wheel</p><h1 tabindex="-1">This page is not on the board</h1><p>The link may have changed. Return to the main page to find your queue.</p><a class="button primary" href="/" data-link>Return home</a></div></main>`;
+  return `<main id="main" class="legal-page"><div class="shell"><p class="eyebrow">404 · page not found</p><h1 tabindex="-1">This page is not available</h1><p>The link may have changed. Return to the main page to review your bills.</p><a class="button primary" href="/" data-link>Return home</a></div></main>`;
 }
 
 async function render(): Promise<void> {
@@ -361,7 +361,7 @@ async function setupBoard(demo: boolean, sequence: number): Promise<void> {
         return previous ? latest.map((bill) => bill.id === id ? next : bill) : [...latest, next];
       });
       if (!saved) return;
-      document.querySelector<HTMLDialogElement>('#bill-dialog')?.close(); redraw(); showToast(wasEditing ? 'Bill changes saved.' : 'Bill added to the queue.');
+      document.querySelector<HTMLDialogElement>('#bill-dialog')?.close(); redraw(); showToast(wasEditing ? 'Bill changes saved.' : 'Bill added to your list.');
     });
 
     document.querySelector<HTMLFormElement>('#paid-form')?.addEventListener('submit', async (event) => {
@@ -416,7 +416,7 @@ function boardMarkup(bills: Bill[], view: 'due' | 'cash'): string {
 }
 
 function dueView(planned: Bill[]): string {
-  if (!planned.length) return `<section class="queue" aria-label="Planned bills"><div class="empty-state"><div class="empty-geometry" aria-hidden="true"></div><h2>Your queue is clear</h2><p>Planned bills will appear here. Add one or import a CSV file.</p><button class="primary" type="button" data-add-empty>Add a bill</button></div></section>`;
+  if (!planned.length) return `<section class="queue" aria-label="Planned bills"><div class="empty-state"><div class="empty-geometry" aria-hidden="true"></div><h2>Your bill list is clear</h2><p>Planned bills will appear here. Add one or import a CSV file.</p><button class="primary" type="button" data-add-empty>Add a bill</button></div></section>`;
   const groups = [
     { title: 'Overdue', items: planned.filter((bill) => dayDistance(bill.dueDate) < 0) },
     { title: 'Next seven days', items: planned.filter((bill) => dayDistance(bill.dueDate) >= 0 && dayDistance(bill.dueDate) <= 6) },

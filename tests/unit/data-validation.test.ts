@@ -101,14 +101,14 @@ describe('release configuration', () => {
 
   it('versions the service-worker shell cache when stable assets are refreshed', () => {
     const worker = readFileSync('public/sw.js', 'utf8');
-    expect(worker).toContain("const CACHE_NAME = 'bills-due-board-shell-v6'");
+    expect(worker).toContain("const CACHE_NAME = 'bills-due-board-shell-v7'");
     expect(worker).toContain('(?:assets|immutable)');
     expect(worker).toContain("keys.filter((key) => key !== CACHE_NAME)");
   });
 
   it('uses the same release version in package and fallback pages', () => {
     const version = JSON.parse(readFileSync('package.json', 'utf8')).version as string;
-    expect(version).toBe('1.0.4');
+    expect(version).toBe('1.0.5');
     for (const page of ['public/404.html', 'public/offline.html']) {
       expect(readFileSync(page, 'utf8')).toContain(`v${version}`);
     }
@@ -123,5 +123,29 @@ describe('release configuration', () => {
       expect([expectedBrowserCommand, 'npm run verify:checkout']).toContain(claim.test);
       expect(source.match(new RegExp(`@claim:${claim.id}(?![-\\w])`, 'g')) ?? [], claim.id).toHaveLength(1);
     }
+  });
+
+  it('keeps reviewed public copy direct and removes the untestable artwork assertion', () => {
+    const app = readFileSync('src/main.ts', 'utf8');
+    const readme = readFileSync('README.md', 'utf8');
+    for (const required of [
+      'Bills by due date',
+      'Bills due in the next seven days',
+      'How to track planned bills',
+      'What this board does not do',
+      'Price and license',
+      'Each planned bill stays listed until you mark it paid.',
+    ]) expect(app).toContain(required);
+    for (const removed of [
+      'A clear queue before the ledger',
+      'Know what needs cash next',
+      'Keep the payment decision visible',
+      'A board, not a bank',
+      'Keep an unlimited active queue',
+      'Each slip joins the queue until you confirm payment.',
+      'Artwork is generated.',
+    ]) expect(app).not.toContain(removed);
+    expect(readme).toContain('a short list of bills due beside their finance tool');
+    expect(readme).not.toContain('payable queue');
   });
 });

@@ -113,13 +113,13 @@ test('keeps demo changes out of the real board @claim:demo-isolation', async ({ 
   await page.getByRole('button', { name: 'Reset demo' }).click();
   await expect(page.locator('[data-bill-id]').filter({ hasText: 'Harbor Electric' })).toBeVisible();
   await page.getByRole('link', { name: 'Start for real' }).click();
-  await expect(page.getByRole('heading', { name: 'Your queue is clear' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Your bill list is clear' })).toBeVisible();
   await expect(page.getByText('Harbor Electric')).toHaveCount(0);
 });
 
 test('free board rejects an eleventh active bill @claim:free-limit', async ({ page }) => {
   await page.goto('/board');
-  await expect(page.getByRole('heading', { name: 'Your queue is clear' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Your bill list is clear' })).toBeVisible();
   const rows = Array.from({ length: 11 }, (_, index) => `Vendor ${index + 1},${index + 1}.00,2030-01-${String(index + 1).padStart(2, '0')},Utilities,,,planned,`);
   await page.locator('#csv-import').setInputFiles({ name: 'eleven.csv', mimeType: 'text/csv', buffer: Buffer.from(`vendor,amount,due_date,category,attachment,notes,status,paid_date\n${rows.join('\n')}`) });
   await expect(page.getByText('This import would pass the free limit of 10 active bills. Mark bills paid or add a license.')).toBeVisible();
@@ -258,7 +258,7 @@ test('uses a stale valid license offline and never waits for verification to ren
     await route.abort('internetdisconnected');
   });
   await page.goto('/board');
-  await expect(page.getByRole('heading', { name: 'Your queue is clear' })).toBeVisible({ timeout: 1000 });
+  await expect(page.getByRole('heading', { name: 'Your bill list is clear' })).toBeVisible({ timeout: 1000 });
   await expect(page.locator('#license-message')).toHaveText('Your license is active. Your board has no active-bill limit.');
   const rows = Array.from({ length: 11 }, (_, index) => `Cached Vendor ${index + 1},${index + 1}.00,2030-03-${String(index + 1).padStart(2, '0')},Utilities,,,planned,`);
   await page.locator('#csv-import').setInputFiles({ name: 'eleven.csv', mimeType: 'text/csv', buffer: Buffer.from(`vendor,amount,due_date,category,attachment,notes,status,paid_date\n${rows.join('\n')}`) });
@@ -295,7 +295,7 @@ test('clearing browser storage removes the local board and license @claim:clear-
     });
   });
   await page.reload();
-  await expect(page.getByRole('heading', { name: 'Your queue is clear' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Your bill list is clear' })).toBeVisible();
   expect(await page.evaluate(() => localStorage.getItem('sb_license:bills-due-board'))).toBeNull();
 });
 
@@ -371,8 +371,8 @@ test('two stale tabs preserve both writes', async ({ context, page }) => {
   const second = await context.newPage();
   await page.goto('/board');
   await second.goto('/board');
-  await expect(page.getByRole('heading', { name: 'Your queue is clear' })).toBeVisible();
-  await expect(second.getByRole('heading', { name: 'Your queue is clear' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Your bill list is clear' })).toBeVisible();
+  await expect(second.getByRole('heading', { name: 'Your bill list is clear' })).toBeVisible();
   await addBill(page, 'Tab A Bill', '10.00');
   await addBill(second, 'Tab B Bill', '20.00');
   await page.reload();
