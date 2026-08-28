@@ -1,3 +1,34 @@
+# Bills Due Board — review 1 handoff
+
+## Status: FAIL — documentation-only adversarial review
+
+Work order bills-due-board-review-1 performed a fresh, non-mutating review of
+the deployed product on 2026-08-28 UTC. No product code, dependencies, or
+deployment configuration was changed.
+
+The review is in .factory/review-1.md. It found three minor findings that block
+this zero-findings review:
+
+1. The static 404 lacks normal Terms/footer links and canonical, social,
+   apple-touch, manifest, and theme-color metadata.
+2. “No tax or accounting advice” is public copy without a declared observable
+   claim test.
+3. README uses unexplained “local-first PWA” and “IndexedDB” jargon.
+
+Verification completed:
+
+- Clean npm ci, all 21 .factory/claims.json commands individually, npm test,
+  npm run test:unit, npm run typecheck, npm run lint, npm run build, and npm
+  run verify:checkout passed.
+- Live cold phone/desktop, demo reset/isolation, outgoing-request privacy,
+  offline behavior, route navigation/back/focus, link crawl, headers, and Axe
+  checks were completed. The report has detailed evidence.
+
+Repair the three findings, then rerun the complete review rather than treating
+this as a diff-only repair.
+
+---
+
 # Bills Due Board — repair 4 handoff
 
 ## Independent verification 5 — PASS
