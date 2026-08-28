@@ -1,5 +1,6 @@
 {
   "routes": [
+    {"route": "/immutable/*", "headers": {"cache-control": "public, max-age=31536000, immutable"}},
     {"route": "/assets/*", "headers": {"cache-control": "public, must-revalidate, max-age=30"}},
     {"route": "/icons/*", "headers": {"cache-control": "public, must-revalidate, max-age=30"}},
     {"route": "/sw.js", "headers": {"cache-control": "public, must-revalidate, max-age=30"}},

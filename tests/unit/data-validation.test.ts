@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { billsToCsv, csvToBills } from '../../src/csv';
 import type { Bill } from '../../src/types';
 import { isCalendarDate, parseCurrencyAmount } from '../../src/validation';
+import viteConfig from '../../vite.config';
 
 describe('financial input validation', () => {
   it('rejects blank, zero, negative, fractional-cent, and non-numeric amounts', () => {
@@ -73,15 +74,31 @@ describe('release configuration', () => {
     }
   });
 
+  it('caches only generated content-hashed bundles as immutable for one year', () => {
+    const config = JSON.parse(readFileSync('public/staticwebapp.config.json', 'utf8')) as {
+      routes: Array<{ route: string; headers?: Record<string, string> }>;
+    };
+    const immutable = config.routes.find((entry) => entry.route === '/immutable/*');
+    const stableAssets = config.routes.find((entry) => entry.route === '/assets/*');
+
+    expect(viteConfig.build?.assetsDir).toBe('immutable');
+    expect(immutable?.headers?.['cache-control']).toBe('public, max-age=31536000, immutable');
+    expect(config.routes.indexOf(immutable!)).toBeLessThan(config.routes.indexOf(stableAssets!));
+    expect(stableAssets?.headers?.['cache-control']).toBe('public, must-revalidate, max-age=30');
+    expect(config.routes.filter((entry) => entry.headers?.['cache-control']?.includes('immutable')))
+      .toEqual([immutable]);
+  });
+
   it('versions the service-worker shell cache when stable assets are refreshed', () => {
     const worker = readFileSync('public/sw.js', 'utf8');
-    expect(worker).toContain("const CACHE_NAME = 'bills-due-board-shell-v4'");
+    expect(worker).toContain("const CACHE_NAME = 'bills-due-board-shell-v5'");
+    expect(worker).toContain('(?:assets|immutable)');
     expect(worker).toContain("keys.filter((key) => key !== CACHE_NAME)");
   });
 
   it('uses the same release version in package and fallback pages', () => {
     const version = JSON.parse(readFileSync('package.json', 'utf8')).version as string;
-    expect(version).toBe('1.0.2');
+    expect(version).toBe('1.0.3');
     for (const page of ['public/404.html', 'public/offline.html']) {
       expect(readFileSync(page, 'utf8')).toContain(`v${version}`);
     }

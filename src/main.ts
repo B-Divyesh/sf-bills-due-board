@@ -8,7 +8,7 @@ const appRoot = document.querySelector<HTMLDivElement>('#app');
 if (!appRoot) throw new Error('The app could not start. Reload this page.');
 const app = appRoot;
 
-const BUILD_ID = 'v1.0.2';
+const BUILD_ID = 'v1.0.3';
 const PRODUCT_SLUG = 'bills-due-board';
 const BUY_URL = `https://api.sociobot.in/api/v1/products/${PRODUCT_SLUG}/checkout`;
 const LICENSE_KEY = `sb_license:${PRODUCT_SLUG}`;

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bills-due-board-shell-v4';
+const CACHE_NAME = 'bills-due-board-shell-v5';
 const SHELL = [
   '/',
   '/index.html',
@@ -20,7 +20,7 @@ self.addEventListener('install', (event) => {
     const response = await fetch('/');
     const html = await response.clone().text();
     await cache.put('/', response);
-    const paths = [...html.matchAll(/(?:src|href)="(\/assets\/[^"]+)"/g)].map((match) => match[1]);
+    const paths = [...html.matchAll(/(?:src|href)="(\/(?:assets|immutable)\/[^"]+)"/g)].map((match) => match[1]);
     await Promise.all([...new Set(paths)].map((path) => cache.add(path)));
     await self.skipWaiting();
   })());
