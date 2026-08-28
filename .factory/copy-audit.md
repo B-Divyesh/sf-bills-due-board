@@ -27,6 +27,10 @@ Audited 28 August 2026. Counts use space-separated words. No sentence exceeds 22
 | A board, not a bank. | 5 | Pass |
 | This is a planning record. | 5 | Pass |
 | Marking a bill paid does not move money or post to an accounting ledger. | 13 | Pass |
+| No bank credentials. | 3 | Pass |
+| No payment initiation. | 3 | Pass |
+| No tax or accounting advice. | 5 | Pass |
+| No automatic account sync. | 4 | Pass |
 | Keep an unlimited active queue. | 6 | Pass |
 | The free board holds 10 active bills. | 7 | Pass |
 | A license removes that limit. | 5 | Pass |
@@ -48,3 +52,13 @@ Audited 28 August 2026. Counts use space-separated words. No sentence exceeds 22
 | Supporting document location | attachment link |
 
 The first screen reads clearly in one breath: see bills by due date, try sample data, or add the first bill.
+
+## README plain-words repair
+
+| Sentence | Words | Result |
+| --- | ---: | --- |
+| It is a web app that keeps its bill records on this device. | 12 | Pass |
+| It is not an accounting ledger or payment service. | 9 | Pass |
+| Stores bill records in encrypted browser storage. | 7 | Pass |
+
+The README keeps implementation terms such as Vite and Playwright in developer-only run and deployment notes.

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bills-due-board-shell-v5';
+const CACHE_NAME = 'bills-due-board-shell-v6';
 const SHELL = [
   '/',
   '/index.html',

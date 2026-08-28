@@ -101,8 +101,17 @@ test('uses encrypted storage @claim:encrypted-storage', async ({ page }) => {
 });
 
 test('keeps demo changes out of the real board @claim:demo-isolation', async ({ page }) => {
-  await page.goto('/demo');
+  await page.goto('/?demo=1');
+  await expect(page).toHaveTitle('Demo — Bills Due Board');
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://bills-due-board.sociobot.in/demo');
+  await expect(page.getByText('Demo — sample data, nothing is saved to your board')).toBeVisible();
   await expect(page.getByText('Harbor Electric')).toBeVisible();
+  const row = page.locator('[data-bill-id]').filter({ hasText: 'Harbor Electric' });
+  await row.getByRole('button', { name: 'Mark paid' }).click();
+  await page.getByRole('button', { name: 'Confirm paid' }).click();
+  await expect(page.getByText('Harbor Electric marked paid.')).toBeVisible();
+  await page.getByRole('button', { name: 'Reset demo' }).click();
+  await expect(page.locator('[data-bill-id]').filter({ hasText: 'Harbor Electric' })).toBeVisible();
   await page.getByRole('link', { name: 'Start for real' }).click();
   await expect(page.getByRole('heading', { name: 'Your queue is clear' })).toBeVisible();
   await expect(page.getByText('Harbor Electric')).toHaveCount(0);
@@ -193,6 +202,29 @@ test('keeps edits local without automatic account sync @claim:account-sync', asy
   expect(sockets).toEqual([]);
 });
 
+test('records tax-category bills without producing tax or accounting advice @claim:tax-advice', async ({ page }) => {
+  await page.goto('/demo');
+  await expect(page.getByText('Harbor Electric')).toBeVisible();
+  const actionRequests: string[] = [];
+  page.on('request', (request) => actionRequests.push(request.url()));
+
+  await page.getByRole('button', { name: 'Add a bill' }).first().click();
+  await page.getByLabel('Vendor').fill('County Revenue Office');
+  await page.getByLabel('Amount in USD').fill('320.00');
+  await page.getByLabel('Due date').fill('2030-04-15');
+  await page.getByLabel('Category').selectOption('Tax');
+  await page.getByLabel('Notes').fill('Quarterly estimate to review');
+  await page.getByRole('button', { name: 'Save bill' }).click();
+
+  const row = page.locator('[data-bill-id]').filter({ hasText: 'County Revenue Office' });
+  await expect(row).toContainText('$320.00');
+  await expect(row).toContainText('Tax');
+  await expect(row).toContainText('Quarterly estimate to review');
+  await expect(row).toContainText('Mark paid');
+  expect(await page.locator('main').innerText()).not.toMatch(/deduct(?:ion|ible)?|write[- ]off|tax rate|filing status|journal entr|you should pay|we recommend/i);
+  expect(actionRequests).toEqual([]);
+});
+
 test('verifies a returned license and stores the result @claim:license-verify', async ({ page }) => {
   let verifyRequest = '';
   let verifyCount = 0;
@@ -275,6 +307,22 @@ test('core pages have accessible structure', async ({ page }) => {
     const results = await new AxeBuilder({ page: page as never }).analyze();
     expect(results.violations).toEqual([]);
   }
+});
+
+test('static 404 has complete metadata, legal navigation, and accessible structure', async ({ page }) => {
+  await page.goto('/404.html');
+  await expect(page).toHaveTitle('Page not found — Bills Due Board');
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://bills-due-board.sociobot.in/404.html');
+  await expect(page.locator('link[rel="manifest"]')).toHaveAttribute('href', '/manifest.webmanifest');
+  await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveAttribute('href', '/apple-touch-icon.png');
+  await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute('content', '#F4EEDF');
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', 'https://bills-due-board.sociobot.in/assets/social-card.webp');
+  await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute('content', 'summary_large_image');
+  await expect(page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Terms' })).toBeVisible();
+  await expect(page.getByRole('navigation', { name: 'Legal and product links' }).getByRole('link', { name: 'Privacy' })).toBeVisible();
+  await expect(page.getByRole('navigation', { name: 'Legal and product links' }).getByRole('link', { name: 'Terms' })).toBeVisible();
+  await expect(page.getByRole('link', { name: /Built by Param Factory/ })).toBeVisible();
+  expect((await new AxeBuilder({ page: page as never }).analyze()).violations).toEqual([]);
 });
 
 test('manual entry works at mobile width with the keyboard @claim:manual-entry', async ({ page }) => {

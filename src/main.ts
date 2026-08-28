@@ -8,7 +8,7 @@ const appRoot = document.querySelector<HTMLDivElement>('#app');
 if (!appRoot) throw new Error('The app could not start. Reload this page.');
 const app = appRoot;
 
-const BUILD_ID = 'v1.0.3';
+const BUILD_ID = 'v1.0.4';
 const PRODUCT_SLUG = 'bills-due-board';
 const BUY_URL = `https://api.sociobot.in/api/v1/products/${PRODUCT_SLUG}/checkout`;
 const LICENSE_KEY = `sb_license:${PRODUCT_SLUG}`;
@@ -44,6 +44,24 @@ function routeMeta(path: string): void {
   document.title = pageTitle(path);
   const canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
   if (canonical) canonical.href = `https://bills-due-board.sociobot.in${path === '/' ? '/' : path}`;
+  const title = pageTitle(path);
+  const description = path === '/demo'
+    ? 'Try a separate Bills Due Board sample with six realistic bills.'
+    : path === '/board'
+      ? 'Keep planned bills by due date and confirm each payment on this device.'
+      : path === '/privacy'
+        ? 'Read how Bills Due Board stores bill records and checks licenses.'
+        : path === '/terms'
+          ? 'Read the terms for using Bills Due Board and its one-time license.'
+          : path === '/'
+            ? 'Keep planned bills in a private due-date queue, review the next cash week, and confirm each payment.'
+            : 'The requested Bills Due Board page was not found.';
+  document.querySelector<HTMLMetaElement>('meta[name="description"]')?.setAttribute('content', description);
+  document.querySelector<HTMLMetaElement>('meta[property="og:title"]')?.setAttribute('content', title);
+  document.querySelector<HTMLMetaElement>('meta[property="og:description"]')?.setAttribute('content', description);
+  document.querySelector<HTMLMetaElement>('meta[property="og:url"]')?.setAttribute('content', canonical?.href ?? location.href);
+  document.querySelector<HTMLMetaElement>('meta[name="twitter:title"]')?.setAttribute('content', title);
+  document.querySelector<HTMLMetaElement>('meta[name="twitter:description"]')?.setAttribute('content', description);
 }
 
 function header(path: string, demo: boolean): string {
@@ -52,10 +70,10 @@ function header(path: string, demo: boolean): string {
       <div class="shell header-row">
         <a class="wordmark" href="/" data-link aria-label="Bills Due Board home"><span class="wordmark-mark" aria-hidden="true"></span><span>Bills Due Board</span></a>
         <nav class="site-nav" aria-label="Main navigation">
-          <a href="/" data-link${current('/')}>Home</a>
           <a href="/demo" data-link${current('/demo')}>Demo</a>
           <a href="/board" data-link${current('/board')}>My board</a>
           <a href="/privacy" data-link${current('/privacy')}>Privacy</a>
+          <a href="/terms" data-link${current('/terms')}>Terms</a>
         </nav>
       </div>
     </header>
@@ -65,7 +83,7 @@ function header(path: string, demo: boolean): string {
 function footer(): string {
   return `<footer class="site-footer"><div class="shell footer-row">
     <div><strong>Bills Due Board</strong><p class="footer-note">A due-date queue for planned bills. Artwork is generated.</p></div>
-    <div><div class="footer-links"><a href="/privacy" data-link>Privacy</a><a href="/terms" data-link>Terms</a><a href="https://sociobot.in" rel="external">Built by Param Factory <span class="sr-only">(external site)</span></a></div><p class="footer-note">${BUILD_ID} · Local-first PWA</p></div>
+    <div><div class="footer-links"><a href="/privacy" data-link>Privacy</a><a href="/terms" data-link>Terms</a><a href="https://sociobot.in" rel="external">Built by Param Factory <span class="sr-only">(external site)</span></a></div><p class="footer-note">${BUILD_ID} · Works offline</p></div>
   </div></footer>`;
 }
 
@@ -137,12 +155,13 @@ async function render(): Promise<void> {
   const sequence = ++renderSequence;
   const path = cleanPath(location.pathname);
   const demo = isDemoRoute();
-  if (path !== '/demo' && path !== '/board') { boardChannel?.close(); boardChannel = null; }
-  routeMeta(path);
-  const content = path === '/' ? landingPage() : path === '/demo' || path === '/board' ? boardPage(demo) : path === '/privacy' ? privacyPage() : path === '/terms' ? termsPage() : notFoundPage();
-  app.innerHTML = `${header(path, demo)}${content}${footer()}<div class="sr-only" aria-live="polite" id="route-announcer"></div>`;
+  const routePath = demo ? '/demo' : path;
+  if (!demo && path !== '/board') { boardChannel?.close(); boardChannel = null; }
+  routeMeta(routePath);
+  const content = demo ? boardPage(true) : path === '/' ? landingPage() : path === '/board' ? boardPage(false) : path === '/privacy' ? privacyPage() : path === '/terms' ? termsPage() : notFoundPage();
+  app.innerHTML = `${header(routePath, demo)}${content}${footer()}<div class="sr-only" aria-live="polite" id="route-announcer"></div>`;
   bindGlobalNavigation();
-  if (path === '/demo' || path === '/board') await setupBoard(demo, sequence);
+  if (demo || path === '/board') await setupBoard(demo, sequence);
   if (sequence === renderSequence) {
     const heading = document.querySelector<HTMLElement>('h1');
     heading?.focus({ preventScroll: true });

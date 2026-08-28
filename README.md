@@ -2,7 +2,7 @@
 
 See every bill by due date, then confirm each payment.
 
-Bills Due Board is for solo operators who need a small payable queue beside their finance tool. It is a local-first PWA, not an accounting ledger or payment service.
+Bills Due Board is for solo operators who need a small payable queue beside their finance tool. It is a web app that keeps its bill records on this device. It is not an accounting ledger or payment service.
 
 Live site: <https://bills-due-board.sociobot.in>
 
@@ -15,7 +15,7 @@ One-click demo: <https://bills-due-board.sociobot.in/demo>
 - Shows the amount due on each of the next seven days.
 - Confirms a paid date and keeps paid history.
 - Exports every bill as CSV.
-- Stores bill records in an encrypted IndexedDB document.
+- Stores bill records in encrypted browser storage.
 - Reloads offline after the first online visit.
 
 The demo uses a separate storage database. It does not read or write the real board. The automated claim tests verify these statements from a fresh browser context.

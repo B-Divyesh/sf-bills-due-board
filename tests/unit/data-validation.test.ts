@@ -64,6 +64,16 @@ describe('release configuration', () => {
     expect(config.responseOverrides['404']).toEqual({ rewrite: '/404.html' });
   });
 
+  it('gives the static 404 complete metadata and legal links', () => {
+    const page = readFileSync('public/404.html', 'utf8');
+    for (const required of [
+      'rel="canonical"', 'property="og:title"', 'property="og:image"',
+      'name="twitter:card"', 'rel="apple-touch-icon"', 'rel="manifest"',
+      'name="theme-color"', 'href="/privacy"', 'href="/terms"',
+      'Built by Param Factory',
+    ]) expect(page).toContain(required);
+  });
+
   it('does not mark stable icon or artwork URLs as immutable', () => {
     const config = JSON.parse(readFileSync('public/staticwebapp.config.json', 'utf8')) as {
       routes: Array<{ route: string; headers?: Record<string, string> }>;
@@ -91,14 +101,14 @@ describe('release configuration', () => {
 
   it('versions the service-worker shell cache when stable assets are refreshed', () => {
     const worker = readFileSync('public/sw.js', 'utf8');
-    expect(worker).toContain("const CACHE_NAME = 'bills-due-board-shell-v5'");
+    expect(worker).toContain("const CACHE_NAME = 'bills-due-board-shell-v6'");
     expect(worker).toContain('(?:assets|immutable)');
     expect(worker).toContain("keys.filter((key) => key !== CACHE_NAME)");
   });
 
   it('uses the same release version in package and fallback pages', () => {
     const version = JSON.parse(readFileSync('package.json', 'utf8')).version as string;
-    expect(version).toBe('1.0.3');
+    expect(version).toBe('1.0.4');
     for (const page of ['public/404.html', 'public/offline.html']) {
       expect(readFileSync(page, 'utf8')).toContain(`v${version}`);
     }
