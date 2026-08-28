@@ -1,0 +1,9 @@
+{
+  "controlled": "https://bills-due-board.sociobot.in/sw.js",
+  "cacheNames": [
+    "bills-due-board-shell-v5"
+  ],
+  "offlineBanner": 1,
+  "sampleVisible": 1,
+  "updateCompleted": true
+}

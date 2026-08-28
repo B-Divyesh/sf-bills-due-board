@@ -1,0 +1,18 @@
+HTTP/1.1 200 OK
+Content-Type: image/webp
+Strict-Transport-Security: max-age=10886400; includeSubDomains; preload
+Referrer-Policy: strict-origin-when-cross-origin
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+X-DNS-Prefetch-Control: off
+cache-control: public, must-revalidate, max-age=30
+ETag: "SWA-CLI-ETAG"
+Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' https://api.sociobot.in; object-src 'none'; base-uri 'self'; form-action 'self' https://api.sociobot.in; frame-ancestors 'none'
+Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
+Accept-Ranges: bytes
+Last-Modified: Fri, 28 Aug 2026 18:30:40 GMT
+Content-Length: 75202
+Date: Fri, 28 Aug 2026 18:31:02 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+

@@ -1,0 +1,44 @@
+[
+  {
+    "file": "index.html",
+    "status": 200,
+    "local": "eb04db219f88cbbee1bb5b2911c6668cdf5f75d1e3725a96322e6e318255c389",
+    "live": "eb04db219f88cbbee1bb5b2911c6668cdf5f75d1e3725a96322e6e318255c389",
+    "match": true
+  },
+  {
+    "file": "immutable/index-BN_q_U6h.js",
+    "status": 200,
+    "local": "c34b15a313dea1fa70878913a9e7d819b0b5035661115e5f1a5b3bb7850b743c",
+    "live": "c34b15a313dea1fa70878913a9e7d819b0b5035661115e5f1a5b3bb7850b743c",
+    "match": true
+  },
+  {
+    "file": "immutable/index-BiTrG3yN.css",
+    "status": 200,
+    "local": "da0186fc96f13cb14b8afa118da51542b286168525128b5de1c722c56fc9d49d",
+    "live": "da0186fc96f13cb14b8afa118da51542b286168525128b5de1c722c56fc9d49d",
+    "match": true
+  },
+  {
+    "file": "sw.js",
+    "status": 200,
+    "local": "55a9ad9581476e861372799b535cd5707655607ef77f8bdaf13ca8998760024a",
+    "live": "55a9ad9581476e861372799b535cd5707655607ef77f8bdaf13ca8998760024a",
+    "match": true
+  },
+  {
+    "file": "manifest.webmanifest",
+    "status": 200,
+    "local": "0e9ec6e5445b356e1faa4b24ce5751e88f556abc3bfd7781d619ad9d0087a890",
+    "live": "0e9ec6e5445b356e1faa4b24ce5751e88f556abc3bfd7781d619ad9d0087a890",
+    "match": true
+  },
+  {
+    "file": "icons/icon-maskable-512.png",
+    "status": 200,
+    "local": "dd49bd2d4f764160c8901642c8f97cf6a84407e4949b5df9c1ed941726ced8a3",
+    "live": "dd49bd2d4f764160c8901642c8f97cf6a84407e4949b5df9c1ed941726ced8a3",
+    "match": true
+  }
+]

@@ -1,0 +1,16 @@
+HTTP/2 200 
+content-type: image/webp
+date: Fri, 28 Aug 2026 18:38:44 GMT
+accept-ranges: bytes
+cache-control: public, must-revalidate, max-age=30
+etag: "75437840"
+last-modified: Fri, 28 Aug 2026 18:38:29 GMT
+content-length: 75202
+strict-transport-security: max-age=10886400; includeSubDomains; preload
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
+x-xss-protection: 1; mode=block
+x-dns-prefetch-control: off
+content-security-policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' https://api.sociobot.in; object-src 'none'; base-uri 'self'; form-action 'self' https://api.sociobot.in; frame-ancestors 'none'
+permissions-policy: camera=(), microphone=(), geolocation=(), payment=()
+

@@ -1,0 +1,5 @@
+{
+  "controlled": "http://127.0.0.1:4194/sw.js",
+  "updateNotice": 1,
+  "reloadAction": 1
+}

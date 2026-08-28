@@ -1,0 +1,49 @@
+{
+  "home": {
+    "status": 200,
+    "headers": {
+      "cache-control": "public, must-revalidate, max-age=30",
+      "content-encoding": "br",
+      "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' https://api.sociobot.in; object-src 'none'; base-uri 'self'; form-action 'self' https://api.sociobot.in; frame-ancestors 'none'",
+      "content-type": "text/html",
+      "date": "Fri, 28 Aug 2026 18:39:06 GMT",
+      "etag": "\"75437840\"",
+      "last-modified": "Fri, 28 Aug 2026 18:38:29 GMT",
+      "permissions-policy": "camera=(), microphone=(), geolocation=(), payment=()",
+      "referrer-policy": "strict-origin-when-cross-origin",
+      "strict-transport-security": "max-age=10886400; includeSubDomains; preload",
+      "vary": "Accept-Encoding",
+      "x-content-type-options": "nosniff",
+      "x-dns-prefetch-control": "off",
+      "x-xss-protection": "1; mode=block"
+    },
+    "title": "Bills Due Board — See bills by due date",
+    "h1": [
+      "See every bill by due date"
+    ],
+    "viewport": {
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    }
+  },
+  "csv": {
+    "rowsIncludingHeader": 8,
+    "formulaNeutralized": true
+  },
+  "privacy": {
+    "requestCount": 7,
+    "uniqueRequests": [
+      "https://bills-due-board.sociobot.in/",
+      "https://bills-due-board.sociobot.in/immutable/index-BN_q_U6h.js",
+      "https://bills-due-board.sociobot.in/immutable/index-BiTrG3yN.css",
+      "https://bills-due-board.sociobot.in/assets/payment-horizon-960.webp",
+      "https://bills-due-board.sociobot.in/demo"
+    ],
+    "crossOriginRequests": [],
+    "consoleErrors": [],
+    "pageErrors": [],
+    "failedRequests": []
+  },
+  "outcome": "PASS"
+}
