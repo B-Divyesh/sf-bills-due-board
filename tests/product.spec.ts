@@ -417,4 +417,10 @@ test('license label and footer links are visible, touch-sized controls', async (
   await page.goto('/');
   const footerBoxes = await page.locator('.footer-links a').evaluateAll((links) => links.map((link) => link.getBoundingClientRect().height));
   expect(footerBoxes.every((height) => height >= 44)).toBe(true);
+  await page.locator('.skip-link').focus();
+  expect((await page.locator('.skip-link').boundingBox())?.height).toBeGreaterThanOrEqual(44);
+  for (const route of ['/privacy', '/terms']) {
+    await page.goto(route);
+    expect((await page.locator('a[href^="mailto:"]').boundingBox())?.height).toBeGreaterThanOrEqual(44);
+  }
 });

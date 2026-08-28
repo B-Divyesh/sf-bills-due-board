@@ -17,7 +17,9 @@ The verifier found three visitor-facing scope/privacy promises that were absent 
 - `payment-initiation` now enumerates “Marking a bill paid does not initiate a payment or move money.” Its fresh-demo regression instruments `PaymentRequest` and all network traffic around confirmation, then proves the bill changes only in local paid history with zero API calls or requests.
 - `account-sync` now enumerates “The app does not automatically sync financial accounts.” Its fresh-demo regression instruments cross-origin traffic and WebSockets, adds a bill, waits, reloads, and proves local persistence with zero external requests or socket connections.
 
-Each new claim has exactly one manifest record and exactly one `@claim:<id>` browser test. The researched brief, product UI, PWA payload, storage behavior, pricing, and every previously passing behavior are unchanged.
+Each new claim has exactly one manifest record and exactly one `@claim:<id>` browser test. The researched brief, product workflow, storage behavior, pricing, and every previously passing behavior are unchanged.
+
+The comprehensive live target audit also found that the focused skip link measured 42 px high and legal-page email links measured 17 px high. Both now use a 44 px minimum target, with regression coverage on the 390 px viewport. This accessibility hardening does not change product behavior.
 
 ## Verification evidence
 
@@ -37,7 +39,7 @@ npm audit --omit=dev           PASS — 0 vulnerabilities
 
 Production-build and browser evidence:
 
-- Vite emitted 36.89 KB JS (11.98 KB gzip) and 16.24 KB CSS (4.37 KB gzip), below the 200 KB and 50 KB budgets.
+- Vite emitted 36.89 KB JS (11.98 KB gzip) and 16.38 KB CSS (4.40 KB gzip), below the 200 KB and 50 KB budgets.
 - `/opt/fleet/lib/verify-url.sh` against `http://127.0.0.1:4173/` passed in 591 ms: HTTP 200, correct title, `lang=en`, one H1, one main landmark, zero missing image alts, zero unnamed buttons, and zero console errors.
 - Playwright covers desktop and 390 px mobile, keyboard-only manual entry, dialog operation, 44 px targets, 200% text reflow, long-value wrapping, error recovery, two-tab writes, privacy, license states, and formula-safe export.
 - Playwright Axe found zero violations on `/`, `/demo`, `/board`, `/privacy`, and `/terms`. The unlicensed board retains accessible core controls.
