@@ -24,7 +24,7 @@ No earlier `.factory/review-*.md` or `.factory/polish-*.md` existed before this 
 - Routes: `/`, `/demo`, `/board`, `/privacy`, and `/terms` have unique titles, descriptions, canonicals, one H1, one main landmark, Open Graph art, H1 focus, and working Back navigation. The mobile header exposes Demo, My board, Privacy, and Terms without overflow, including at 200% text size.
 - Claims: `.factory/claims.json` contains 22 claims. Every listed command passed individually from clean clone `/tmp/bills-due-board-final.frw0fR`; the registry test confirms one and only one `@claim:<id>` test per browser claim.
 - Privacy and offline: the live demo flow made no cross-origin request, loaded no third-party script, produced no browser error, and reloaded the seeded queue offline with the offline status visible. Screenshot: `polish-1-live/offline-demo-mobile.png`.
-- Catalog: `.factory/catalog-description.txt` is a verb-first, 91-character sentence.
+- Catalog: `.factory/catalog-description.txt` is a verb-first, 93-character sentence.
 
 ## Verification evidence
 

@@ -19,7 +19,7 @@ Perfection-loop round 1 repaired every finding in `.factory/review-1.md`, rechec
 - README replaces “local-first PWA” and “IndexedDB” with plain descriptions of what the user gets.
 - `/?demo=1` now opens the isolated sample board directly with its Demo title/canonical, persistent banner, Reset demo, and Start for real. `/demo` remains the primary shareable route.
 - Route descriptions and social titles now change with the route. The header provides all four product/legal destinations on mobile and still reflows at 200% text size.
-- The catalog description is verb-first and 91 characters. The release and service-worker shell advanced to `v1.0.4` / `bills-due-board-shell-v6`.
+- The catalog description is verb-first and 93 characters. The release and service-worker shell advanced to `v1.0.4` / `bills-due-board-shell-v6`.
 
 The payment-horizon visual system, local encrypted data model, static PWA deployment class, and one-time Sociobot license flow are unchanged.
 
