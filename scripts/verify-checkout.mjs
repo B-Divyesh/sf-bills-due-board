@@ -6,4 +6,11 @@ if (![302, 303].includes(response.status) || !location.startsWith('https://check
   throw new Error(`Checkout did not start a hosted Sociobot payment session (status ${response.status}, location ${location || 'missing'}).`);
 }
 
-console.log(`Checkout health check passed: ${response.status} → ${new URL(location).host}`);
+// @claim:license-checkout
+const checkoutPage = await fetch(location);
+const checkoutHtml = await checkoutPage.text();
+if (!checkoutPage.ok || !checkoutHtml.includes('Bills Due Board License') || !checkoutHtml.includes('$19.00') || !checkoutHtml.includes('One-time license')) {
+  throw new Error('Hosted checkout did not show the Bills Due Board $19 one-time license.');
+}
+
+console.log(`Checkout health check passed: ${response.status} → ${new URL(location).host} ($19 one-time license)`);

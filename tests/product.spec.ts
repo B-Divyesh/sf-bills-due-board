@@ -147,13 +147,68 @@ test('verifies a returned license and stores the result @claim:license-verify', 
   await expect(page.getByRole('link', { name: 'Buy a license' })).toHaveAttribute('href', 'https://api.sociobot.in/api/v1/products/bills-due-board/checkout');
 });
 
+test('uses a stale valid license offline and never waits for verification to render the board @claim:license-offline', async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('sb_license:bills-due-board', 'cached-valid-token');
+    localStorage.setItem('sb_license:bills-due-board:verdict', JSON.stringify({
+      unlocked: true,
+      message: 'Your license is active. Your board has no active-bill limit.',
+      checkedAt: Date.now() - 2 * 86400000,
+    }));
+  });
+  await page.route('https://api.sociobot.in/api/v1/products/bills-due-board/verify?license=*', async (route) => {
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+    await route.abort('internetdisconnected');
+  });
+  await page.goto('/board');
+  await expect(page.getByRole('heading', { name: 'Your queue is clear' })).toBeVisible({ timeout: 1000 });
+  await expect(page.locator('#license-message')).toHaveText('Your license is active. Your board has no active-bill limit.');
+  const rows = Array.from({ length: 11 }, (_, index) => `Cached Vendor ${index + 1},${index + 1}.00,2030-03-${String(index + 1).padStart(2, '0')},Utilities,,,planned,`);
+  await page.locator('#csv-import').setInputFiles({ name: 'eleven.csv', mimeType: 'text/csv', buffer: Buffer.from(`vendor,amount,due_date,category,attachment,notes,status,paid_date\n${rows.join('\n')}`) });
+  await expect(page.getByText('Imported 11 bills.')).toBeVisible();
+  await expect(page.getByText('Cached Vendor 11')).toBeVisible();
+});
+
+test('landing preview derives the current sample cash week @claim:landing-preview', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('[data-preview-total]')).toHaveText('$1,339.80');
+  await expect(page.locator('[data-preview-count]')).toHaveText('3 planned bills');
+  await expect(page.locator('.preview-list')).toContainText('Harbor Electric');
+  await expect(page.locator('.preview-list')).toContainText('Northline Packaging');
+  await expect(page.locator('.preview-list')).toContainText('Mira Workspace');
+  await expect(page.locator('.preview-list')).toContainText('Cloudpost Mail');
+});
+
+test('lists the one-time license price and Sociobot checkout link', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('.price')).toContainText('$19');
+  await expect(page.getByRole('link', { name: 'Buy a license' }).last()).toHaveAttribute('href', 'https://api.sociobot.in/api/v1/products/bills-due-board/checkout');
+});
+
+test('clearing browser storage removes the local board and license @claim:clear-local-data', async ({ page }) => {
+  await page.goto('/board');
+  await addBill(page, 'Storage Reset Bill');
+  await page.evaluate(() => localStorage.setItem('sb_license:bills-due-board', 'device-license'));
+  await page.evaluate(async () => {
+    localStorage.clear();
+    await new Promise<void>((resolve, reject) => {
+      const request = indexedDB.deleteDatabase('bills-due-board:v1');
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  });
+  await page.reload();
+  await expect(page.getByRole('heading', { name: 'Your queue is clear' })).toBeVisible();
+  expect(await page.evaluate(() => localStorage.getItem('sb_license:bills-due-board'))).toBeNull();
+});
+
 test('core pages have accessible structure', async ({ page }) => {
-  for (const route of ['/', '/demo', '/privacy', '/terms']) {
+  for (const route of ['/', '/demo', '/board', '/privacy', '/terms']) {
     await page.goto(route);
     await expect(page.locator('main')).toHaveCount(1);
     await expect(page.locator('h1')).toHaveCount(1);
     const results = await new AxeBuilder({ page: page as never }).analyze();
-    expect(results.violations.filter((item) => ['serious', 'critical'].includes(item.impact ?? ''))).toEqual([]);
+    expect(results.violations).toEqual([]);
   }
 });
 
@@ -273,4 +328,28 @@ test('mobile targets stay large and content reflows at 200 percent', async ({ pa
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
   const deleteEdges = await page.getByRole('button', { name: 'Delete' }).evaluateAll((buttons) => buttons.map((button) => button.getBoundingClientRect().right));
   expect(deleteEdges.every((edge) => edge <= 390)).toBe(true);
+});
+
+test('long accepted CSV content wraps inside a 390px board', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/board');
+  const vendor = 'V'.repeat(500);
+  const notes = 'N'.repeat(300);
+  await page.locator('#csv-import').setInputFiles({
+    name: 'long.csv', mimeType: 'text/csv',
+    buffer: Buffer.from(`vendor,amount,due_date,category,attachment,notes,status,paid_date\n${vendor},10.00,2030-02-10,Utilities,,${notes},planned,`),
+  });
+  await expect(page.getByText(vendor)).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+});
+
+test('license label and footer links are visible, touch-sized controls', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/board');
+  await expect(page.getByLabel('License token')).toBeVisible();
+  const labelBox = await page.locator('label[for="license-token"]').boundingBox();
+  expect(labelBox?.height).toBeGreaterThan(0);
+  await page.goto('/');
+  const footerBoxes = await page.locator('.footer-links a').evaluateAll((links) => links.map((link) => link.getBoundingClientRect().height));
+  expect(footerBoxes.every((height) => height >= 44)).toBe(true);
 });

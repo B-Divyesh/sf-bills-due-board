@@ -72,7 +72,7 @@ See the in-app `/privacy` and `/terms` pages. Clearing site data removes the boa
 
 ## Deploy
 
-Deploy the contents of `dist/` as a static site. `staticwebapp.config.json` supplies SPA routing, security headers, and immutable asset caching. The factory owns DNS, billing registration, and deployment.
+Deploy the contents of `dist/` as a static site. `staticwebapp.config.json` supplies SPA routing, security headers, and a short revalidation policy for stable assets. The factory owns DNS, billing registration, and deployment.
 
 ## License
 

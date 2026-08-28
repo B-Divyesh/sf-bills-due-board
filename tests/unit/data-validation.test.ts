@@ -63,12 +63,30 @@ describe('release configuration', () => {
     expect(config.responseOverrides['404']).toEqual({ rewrite: '/404.html' });
   });
 
-  it('maps every public claim to exactly one tagged browser test', () => {
+  it('does not mark stable icon or artwork URLs as immutable', () => {
+    const config = JSON.parse(readFileSync('public/staticwebapp.config.json', 'utf8')) as {
+      routes: Array<{ route: string; headers?: Record<string, string> }>;
+    };
+    for (const route of config.routes.filter((entry) => entry.route === '/assets/*' || entry.route === '/icons/*')) {
+      expect(route.headers?.['cache-control']).not.toContain('immutable');
+      expect(route.headers?.['cache-control']).toContain('must-revalidate');
+    }
+  });
+
+  it('versions the service-worker shell cache when stable assets are refreshed', () => {
+    const worker = readFileSync('public/sw.js', 'utf8');
+    expect(worker).toContain("const CACHE_NAME = 'bills-due-board-shell-v4'");
+    expect(worker).toContain("keys.filter((key) => key !== CACHE_NAME)");
+  });
+
+  it('maps every public claim to exactly one tagged regression test', () => {
     const claims = JSON.parse(readFileSync('.factory/claims.json', 'utf8')) as Array<{ id: string; test: string }>;
     const browserTests = readFileSync('tests/product.spec.ts', 'utf8');
     for (const claim of claims) {
-      expect(claim.test).toBe(`npm test -- --grep @claim:${claim.id}`);
-      expect(browserTests.match(new RegExp(`@claim:${claim.id}(?![-\\w])`, 'g')) ?? [], claim.id).toHaveLength(1);
+      const expectedBrowserCommand = `npm test -- --grep @claim:${claim.id}`;
+      const source = claim.test === expectedBrowserCommand ? browserTests : readFileSync('scripts/verify-checkout.mjs', 'utf8');
+      expect([expectedBrowserCommand, 'npm run verify:checkout']).toContain(claim.test);
+      expect(source.match(new RegExp(`@claim:${claim.id}(?![-\\w])`, 'g')) ?? [], claim.id).toHaveLength(1);
     }
   });
 });

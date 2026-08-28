@@ -12,6 +12,8 @@ Audited 28 August 2026. Counts use space-separated words. No sentence exceeds 22
 | Free for 10 active bills. | 6 | Pass |
 | Each slip joins the queue until you confirm payment. | 9 | Pass |
 | Know what needs cash next. | 6 | Pass |
+| Next seven days. | 3 | Pass |
+| 3 planned bills. | 3 | Pass |
 | The board sorts planned bills by date. | 7 | Pass |
 | Overdue items stay first until you mark them paid. | 9 | Pass |
 | Keep the payment decision visible. | 6 | Pass |
@@ -29,8 +31,9 @@ Audited 28 August 2026. Counts use space-separated words. No sentence exceeds 22
 | The free board holds 10 active bills. | 7 | Pass |
 | A license removes that limit. | 5 | Pass |
 | CSV import, export, offline use, and accessibility stay free. | 9 | Pass |
+| $19 once. | 2 | Pass |
 | A due-date queue for planned bills. | 6 | Pass |
-| Generated artwork is original. | 4 | Pass |
+| Artwork is generated. | 3 | Pass |
 
 ## Terminology
 

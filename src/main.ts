@@ -8,7 +8,7 @@ const appRoot = document.querySelector<HTMLDivElement>('#app');
 if (!appRoot) throw new Error('The app could not start. Reload this page.');
 const app = appRoot;
 
-const BUILD_ID = 'v1.0.1';
+const BUILD_ID = 'v1.0.2';
 const PRODUCT_SLUG = 'bills-due-board';
 const BUY_URL = `https://api.sociobot.in/api/v1/products/${PRODUCT_SLUG}/checkout`;
 const LICENSE_KEY = `sb_license:${PRODUCT_SLUG}`;
@@ -48,8 +48,7 @@ function routeMeta(path: string): void {
 
 function header(path: string, demo: boolean): string {
   const current = (href: string) => path === href ? ' aria-current="page"' : '';
-  return `${demo ? `<div class="demo-banner"><div class="shell"><strong>Demo — sample data, nothing is saved to your board</strong><button type="button" id="reset-demo">Reset demo</button><a href="/board" data-link>Start for real</a></div></div>` : ''}
-    <header class="site-header">
+  return `<header class="site-header">${demo ? `<div class="demo-banner"><div class="shell"><strong>Demo — sample data, nothing is saved to your board</strong><button type="button" id="reset-demo">Reset demo</button><a href="/board" data-link>Start for real</a></div></div>` : ''}
       <div class="shell header-row">
         <a class="wordmark" href="/" data-link aria-label="Bills Due Board home"><span class="wordmark-mark" aria-hidden="true"></span><span>Bills Due Board</span></a>
         <nav class="site-nav" aria-label="Main navigation">
@@ -65,12 +64,15 @@ function header(path: string, demo: boolean): string {
 
 function footer(): string {
   return `<footer class="site-footer"><div class="shell footer-row">
-    <div><strong>Bills Due Board</strong><p class="footer-note">A due-date queue for planned bills. Generated artwork is original.</p></div>
+    <div><strong>Bills Due Board</strong><p class="footer-note">A due-date queue for planned bills. Artwork is generated.</p></div>
     <div><div class="footer-links"><a href="/privacy" data-link>Privacy</a><a href="/terms" data-link>Terms</a><a href="https://sociobot.in" rel="external">Built by Param Factory <span class="sr-only">(external site)</span></a></div><p class="footer-note">${BUILD_ID} · Local-first PWA</p></div>
   </div></footer>`;
 }
 
 function landingPage(): string {
+  const preview = demoBills().filter((bill) => bill.status === 'planned' && dayDistance(bill.dueDate) >= 0 && dayDistance(bill.dueDate) <= 6);
+  const previewTotal = preview.reduce((sum, bill) => sum + bill.amount, 0);
+  const overdue = demoBills().find((bill) => bill.status === 'planned' && dayDistance(bill.dueDate) < 0);
   return `<main id="main">
     <section class="hero"><div class="shell hero-grid">
       <div class="hero-copy">
@@ -86,10 +88,9 @@ function landingPage(): string {
       </figure>
     </div></section>
     <section class="preview-section" aria-labelledby="preview-title"><div class="shell"><p class="eyebrow">The queue</p><h2 id="preview-title">Know what needs cash next</h2><p class="section-intro">The board sorts planned bills by date. Overdue items stay first until you mark them paid.</p>
-      <div class="preview-board" aria-label="Sample due-date board"><div class="preview-rail">Next seven days<strong>$1,486.42</strong><p>4 planned bills</p></div><div class="preview-list">
-        <div class="preview-row"><span class="preview-date">Aug 26</span><span><span class="preview-status">Overdue</span><br><strong>Harbor Electric</strong></span><strong>$184.62</strong></div>
-        <div class="preview-row"><span class="preview-date">Aug 29</span><span>Northline Packaging</span><strong>$426.80</strong></div>
-        <div class="preview-row"><span class="preview-date">Aug 31</span><span>Mira Workspace</span><strong>$875.00</strong></div>
+      <div class="preview-board" aria-label="Sample due-date board"><div class="preview-rail">Next seven days<strong data-preview-total>${formatMoney(previewTotal)}</strong><p data-preview-count>${preview.length} planned ${preview.length === 1 ? 'bill' : 'bills'}</p></div><div class="preview-list">
+        ${overdue ? `<div class="preview-row"><span class="preview-date">${escapeHtml(formatDate(overdue.dueDate))}</span><span><span class="preview-status">Overdue</span><br><strong>${escapeHtml(overdue.vendor)}</strong></span><strong>${formatMoney(overdue.amount)}</strong></div>` : ''}
+        ${preview.map((bill) => `<div class="preview-row"><span class="preview-date">${escapeHtml(formatDate(bill.dueDate))}</span><span>${escapeHtml(bill.vendor)}</span><strong>${formatMoney(bill.amount)}</strong></div>`).join('')}
       </div></div>
     </div></section>
     <section class="steps" aria-labelledby="steps-title"><div class="shell"><p class="eyebrow">How it works</p><h2 id="steps-title">Keep the payment decision visible</h2><div class="steps-grid">
@@ -117,7 +118,7 @@ function boardPage(demo: boolean): string {
 }
 
 function licensePanel(): string {
-  return `<section class="license-panel" aria-labelledby="license-title"><p class="eyebrow">Board capacity</p><h2 id="license-title">Free for 10 active bills</h2><p id="license-message" aria-live="polite">A $19 one-time license removes the active-bill limit.</p><div class="license-row"><a class="button primary" href="${BUY_URL}">Buy a license</a><label class="sr-only" for="license-token">License token</label><input id="license-token" type="text" autocomplete="off" placeholder="Paste your license token"><button class="secondary" type="button" id="verify-license">Activate license</button></div></section>`;
+  return `<section class="license-panel" aria-labelledby="license-title"><p class="eyebrow">Board capacity</p><h2 id="license-title">Free for 10 active bills</h2><p id="license-message" aria-live="polite">A $19 one-time license removes the active-bill limit.</p><div class="license-row"><a class="button primary" href="${BUY_URL}">Buy a license</a><div class="license-token-field"><label for="license-token">License token</label><input id="license-token" type="text" autocomplete="off" placeholder="Paste your license token"></div><button class="secondary" type="button" id="verify-license">Activate license</button></div></section>`;
 }
 
 function privacyPage(): string {
@@ -197,7 +198,8 @@ async function setupBoard(demo: boolean, sequence: number): Promise<void> {
     if (sequence !== renderSequence) return;
     document.querySelector<HTMLElement>('#board-tools')!.hidden = false;
     let view: 'due' | 'cash' = 'due';
-    let license = demo ? { unlocked: true, message: 'Demo capacity has no limit.' } : await currentLicenseState();
+    const licenseSnapshot = demo ? null : currentLicenseState();
+    let license = demo ? { unlocked: true, message: 'Demo capacity has no limit.' } : licenseSnapshot!.state;
     boardChannel?.close();
     boardChannel = new BroadcastChannel(`bills-due-board:${demo ? 'demo' : 'real'}`);
 
@@ -369,9 +371,15 @@ async function setupBoard(demo: boolean, sequence: number): Promise<void> {
       const input = document.querySelector<HTMLInputElement>('#license-token'); const token = input?.value.trim() ?? '';
       if (!token) { showToast('Paste your license token, then activate it.'); return; }
       localStorage.setItem(LICENSE_KEY, token); localStorage.removeItem(LICENSE_CACHE_KEY);
-      license = await verifyLicense(token); redraw(); showToast(license.message);
+      license = { unlocked: false, message: 'Checking this license…' }; redraw();
+      try { license = await verifyLicense(token); }
+      catch { license = { unlocked: false, message: 'The license could not be checked. Go online and try again.' }; }
+      redraw(); showToast(license.message);
     });
     redraw();
+    if (!demo && licenseSnapshot?.token && licenseSnapshot.needsVerification) {
+      void refreshLicenseInBackground(licenseSnapshot, (state) => { license = state; redraw(); });
+    }
   } catch (error) {
     if (errorBox) { errorBox.hidden = false; errorBox.textContent = `${error instanceof Error ? error.message : 'Browser storage did not open.'} Check that private browsing allows IndexedDB, then reload.`; }
     const content = document.querySelector('#board-content'); if (content) content.innerHTML = '<div class="empty-state"><div class="empty-geometry" aria-hidden="true"></div><h2>Your board could not open</h2><p>Check browser storage settings, then reload this page.</p></div>';
@@ -440,25 +448,34 @@ function showToast(message: string, action?: () => void | Promise<void>, actionL
 }
 
 async function verifyLicense(token: string): Promise<LicenseState> {
-  try {
-    const response = await fetch(`https://api.sociobot.in/api/v1/products/${PRODUCT_SLUG}/verify?license=${encodeURIComponent(token)}`);
-    if (!response.ok) throw new Error('License check failed.');
-    const result = await response.json() as { valid: boolean; reason?: string };
-    const state = result.valid ? { unlocked: true, message: 'Your license is active. Your board has no active-bill limit.' } : { unlocked: false, message: 'This license is not active. Check the token or buy a new license.' };
-    localStorage.setItem(LICENSE_CACHE_KEY, JSON.stringify({ ...state, checkedAt: Date.now() })); return state;
-  } catch {
-    return { unlocked: false, message: 'The license could not be checked. Go online and try again.' };
-  }
+  const response = await fetch(`https://api.sociobot.in/api/v1/products/${PRODUCT_SLUG}/verify?license=${encodeURIComponent(token)}`);
+  if (!response.ok) throw new Error('License check failed.');
+  const result = await response.json() as { valid: boolean; reason?: string };
+  const state = result.valid ? { unlocked: true, message: 'Your license is active. Your board has no active-bill limit.' } : { unlocked: false, message: 'This license is not active. Check the token or buy a new license.' };
+  localStorage.setItem(LICENSE_CACHE_KEY, JSON.stringify({ ...state, checkedAt: Date.now() }));
+  return state;
 }
 
-async function currentLicenseState(): Promise<LicenseState> {
+type LicenseSnapshot = { state: LicenseState; token?: string; needsVerification: boolean; hasCachedVerdict: boolean };
+
+function currentLicenseState(): LicenseSnapshot {
   const token = localStorage.getItem(LICENSE_KEY);
-  if (!token) return { unlocked: false, message: 'A $19 one-time license removes the active-bill limit.' };
+  if (!token) return { state: { unlocked: false, message: 'A $19 one-time license removes the active-bill limit.' }, needsVerification: false, hasCachedVerdict: false };
   try {
     const cached = JSON.parse(localStorage.getItem(LICENSE_CACHE_KEY) ?? 'null') as { unlocked: boolean; message: string; checkedAt: number } | null;
-    if (cached && Date.now() - cached.checkedAt < 86400000) return { unlocked: cached.unlocked, message: cached.message };
+    if (cached && typeof cached.unlocked === 'boolean' && typeof cached.message === 'string' && typeof cached.checkedAt === 'number') {
+      return { state: { unlocked: cached.unlocked, message: cached.message }, token, needsVerification: Date.now() - cached.checkedAt >= 86400000, hasCachedVerdict: true };
+    }
   } catch { localStorage.removeItem(LICENSE_CACHE_KEY); }
-  return verifyLicense(token);
+  return { state: { unlocked: false, message: 'Checking your license…' }, token, needsVerification: true, hasCachedVerdict: false };
+}
+
+async function refreshLicenseInBackground(snapshot: LicenseSnapshot, apply: (state: LicenseState) => void): Promise<void> {
+  if (!snapshot.token) return;
+  try { apply(await verifyLicense(snapshot.token)); }
+  catch {
+    if (!snapshot.hasCachedVerdict) apply({ unlocked: false, message: 'The license could not be checked. Go online and try again.' });
+  }
 }
 
 function acceptReturnedLicense(): void {
