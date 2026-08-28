@@ -1,11 +1,13 @@
 # Bills Due Board — repair handoff
 
-**Status: repaired and verified locally; deployment verification follows push.**
+**Status: released and verified.**
 
 - Work order: `bills-due-board-repair-2`
 - Repair base/report: candidate `15320b4432584d4afd37126ed6a3355cee4b608c`, verifier report commit `be77e3fc3a62c32602f504fb023d50512325a7de`
 - Artifact: static, local-first PWA (`dist/`)
 - Version: `1.0.2` / footer `v1.0.2`
+- Repair commits: `1b23b6e` and `cf058f9`
+- Deployment: Azure Static Web Apps production, `bills-due-board.sociobot.in`, 2026-08-28 16:33 UTC
 
 ## Repairs
 
@@ -40,6 +42,14 @@ Browser and accessibility evidence:
 - Desktop plus 390 px workflows pass in Playwright. Keyboard-only 390 px manual entry, dialog focus behavior, 200% text reflow, 44 px targets, and long-content wrapping are covered by the suite.
 - Offline demo reload is covered by `@claim:offline-reload`; the stale two-day valid-license/slow-failed verification path is covered by `@claim:license-offline`; the worker cache-name update is covered by a unit regression.
 - Local mobile Lighthouse 12.8.2: Performance 100, Accessibility 100, Best Practices 100, SEO 100; FCP 1.0 s, LCP 1.6 s, TBT 50 ms, CLS 0, total transfer 162 KiB.
+
+## Live release verification
+
+- The production root, built JS, CSS, and `sw.js` matched local SHA-256 bytes after deployment. The worker is active under `bills-due-board-shell-v4`.
+- Production `/demo` made no cross-origin request during the local-data flow, retained Harbor Electric after an offline reload, and was controlled by `/sw.js`.
+- Production `verify-url.sh`: HTTP 200, title, `lang=en`, one H1, main landmark, complete image alt text, no unlabeled buttons, and no console errors (618 ms load).
+- Production unknown routes return an HTTP 404 and the fallback plus offline pages now both display `v1.0.2`.
+- Production response policy headers include HSTS, CSP, `nosniff`, strict-origin referrer policy, and the declared permissions policy. Stable icon/artwork URLs and `sw.js` return `public, must-revalidate, max-age=30`, not immutable caching.
 
 ## How to run
 
