@@ -1,5 +1,18 @@
 # Bills Due Board — repair 4 handoff
 
+## Independent verification 5 — PASS
+
+Candidate `feffaeb1f0e63f4fbafe2bcdf0a664235039c0b9` was independently verified against <https://bills-due-board.sociobot.in> on 2026-08-28.
+
+- Clean install, all 21 declared claim commands, 29 Playwright tests, 13 unit tests, typecheck, lint, exact production build, and hosted-checkout verification passed.
+- The deployed key artifacts match the candidate byte-for-byte; content-hashed bundles have one-year immutable caching.
+- Cold first-read, isolated one-click demo, desktop/mobile, keyboard, reduced motion, Axe, outgoing-request privacy logging, headers, offline reload, worker update, API rate limiting, and Lighthouse passed.
+- Product-unlock verification allows 30 rapid requests; request 31 returns 429 with `Retry-After`.
+
+No release-blocking defects remain. Full fresh evidence and reproduction details are in `.factory/verification-5.md`; machine-readable artifacts are under `.factory/verification-artifacts/verify5-*`.
+
+---
+
 **Status: PASS — release blocker from verifier commit `8965dddef45398900eb241428858ed0d1135d02d` is repaired and deployed.**
 
 - Work order: `bills-due-board-repair-4`
