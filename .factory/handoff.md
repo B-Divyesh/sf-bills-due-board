@@ -1,6 +1,6 @@
 # Bills Due Board — repair handoff
 
-**Status: locally verified; live deployment verification follows the pushed commit.**
+**Status: deployed and verified.**
 
 - Repair base: `77f4af5c45c6b52aac9fff721d3d972e348440e5`
 - Product: `bills-due-board` (`pwa-offline`, static deployment)
@@ -37,6 +37,16 @@ npm run verify:checkout        PASS — 303 → checkout.dodopayments.com
 
 The Playwright suite covers desktop plus 390px mobile, keyboard form use, axe serious/critical findings on the core routes, offline demo reload, storage isolation/encryption, privacy request observation, and service-worker registration. The current production bundle is 36,123 bytes JS (11,730 gzip) and 15,935 bytes CSS (4,320 gzip); the mobile hero is 75,202 bytes.
 
+## Live deployment verification (2026-08-28)
+
+- Deployed `4ca9920dd29adbf76c33c11ea7fdd93d8b238286` with `/opt/fleet/lib/deploy-static.sh bills-due-board dist`; Azure deployment ID `65e4d0f1-ef7b-4380-bc24-d56515031cc0` completed successfully.
+- The live home HTML SHA-256 is `2960ffb7fa62ede34ca015ba18dfb83cb9b25eb6cf896d1b6e0bcc7521b0b947`, exactly matching `dist/index.html`; it loads `assets/index-CsCQ_-SB.js`.
+- Factory URL verification passed: HTTP 200, title, `lang=en`, one H1 and main landmark, no missing image alt or unlabeled buttons, and no console errors. Evidence: `.factory/qa-artifacts/repair-live/verify.json` and its desktop/mobile screenshots.
+- Live `/not-a-real-route` returns HTTP 404 and `Page not found — Bills Due Board`. The live shell uses `must-revalidate, max-age=30`; hashed JS uses one-year immutable caching. CSP, HSTS, nosniff, strict-origin referrer policy, and the camera/microphone/geolocation/payment Permissions-Policy are present.
+- Live 390px demo keyboard entry and offline reload both passed with `scrollWidth: 390` and no console errors. Live axe serious/critical counts were zero for `/`, `/demo`, `/board`, `/privacy`, `/terms`, and `/not-a-real-route`.
+- Lighthouse 12.8.2, live mobile: Performance 99, Accessibility 100, Best Practices 100, SEO 100; FCP 1.0 s, LCP 1.4 s, CLS 0. Evidence: `.factory/qa-artifacts/repair-live/lighthouse-mobile.json`.
+- `npm run verify:checkout` passed after deployment: HTTP 303 to `checkout.dodopayments.com`.
+
 ## Run and deploy
 
 ```sh
@@ -53,4 +63,4 @@ The deployment artifact remains `dist/` with `index.html` at its root. Push `mai
 
 ## Known gaps
 
-None in the local repair. The final live URL/response-policy/identity evidence is recorded in the follow-up deployment commit.
+None known.
