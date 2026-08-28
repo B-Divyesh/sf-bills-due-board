@@ -1,6 +1,32 @@
-# Bills Due Board — repair handoff
+# Bills Due Board — verification handoff
 
-**Status: released and verified.**
+**Status: FAIL — release blocked by incomplete public-claim coverage.**
+
+Latest independent verification: `e0eeaee206abcf07064e7095772c517fc4502d14`, production <https://bills-due-board.sociobot.in>, 2026-08-28 UTC. Full evidence: [`.factory/verification-3.md`](verification-3.md).
+
+No product code was changed during verification. The production deployment is byte-identical to this candidate and all automated functional/quality gates passed; the failure is the acceptance-contract finding below.
+
+## Release blocker
+
+The public “no bank credentials,” “no payment initiation/does not move money,” and “no automatic account sync” promises have no entries or uniquely tagged sandbox tests in `.factory/claims.json`. The claims contract makes an unlisted visitor-facing promise a failed review. Add observable clean-demo regressions for those promises, or remove/reword them, before re-verification.
+
+## Latest verification summary
+
+```text
+npm ci                         PASS — 61 packages, 0 vulnerabilities
+18 exact claim commands        PASS — every command from .factory/claims.json
+npm test                       PASS — 26 Playwright tests
+npm run test:unit              PASS — 13 Vitest tests
+npm run typecheck              PASS
+npm run lint                   PASS
+npm run build                  PASS — dist/ produced
+npm run verify:checkout        PASS — 303 to Dodo; $19 one-time license
+npm audit --omit=dev           PASS — 0 vulnerabilities
+```
+
+Production first-read/demo, service-worker offline reload/update, byte identity, headers/CSP, same-origin demo privacy, 390 px keyboard/reduced-motion behavior, Axe (zero serious/critical), and rate limiting (429 with `Retry-After`) all passed. Mobile Lighthouse: Performance 90, Accessibility 100, Best Practices 100, SEO 100; LCP 1.6 s, CLS 0.
+
+## Previous repair record
 
 - Work order: `bills-due-board-repair-2`
 - Repair base/report: candidate `15320b4432584d4afd37126ed6a3355cee4b608c`, verifier report commit `be77e3fc3a62c32602f504fb023d50512325a7de`
