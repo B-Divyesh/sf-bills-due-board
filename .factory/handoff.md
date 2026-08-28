@@ -15,7 +15,7 @@
 - Wrapped long vendor and note values at every responsive breakpoint, including accepted 500-character CSV content at 390 px.
 - Moved the demo banner into the header landmark, made footer links 44 px touch targets, and added a visible license-token label.
 - Changed stable artwork/icons to short revalidation caching and bumped the service-worker cache to `bills-due-board-shell-v4`, so stable URLs are refreshed with the new shell.
-- Aligned package/footer version strings and changed the generated-art disclosure to plain factual copy.
+- Aligned package, application footer, 404/offline fallback footer version strings and changed the generated-art disclosure to plain factual copy.
 
 ## Verification
 

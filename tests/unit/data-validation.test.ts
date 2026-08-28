@@ -79,6 +79,14 @@ describe('release configuration', () => {
     expect(worker).toContain("keys.filter((key) => key !== CACHE_NAME)");
   });
 
+  it('uses the same release version in package and fallback pages', () => {
+    const version = JSON.parse(readFileSync('package.json', 'utf8')).version as string;
+    expect(version).toBe('1.0.2');
+    for (const page of ['public/404.html', 'public/offline.html']) {
+      expect(readFileSync(page, 'utf8')).toContain(`v${version}`);
+    }
+  });
+
   it('maps every public claim to exactly one tagged regression test', () => {
     const claims = JSON.parse(readFileSync('.factory/claims.json', 'utf8')) as Array<{ id: string; test: string }>;
     const browserTests = readFileSync('tests/product.spec.ts', 'utf8');
