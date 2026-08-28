@@ -27,7 +27,7 @@ Clean bootstrap and quality gates:
 npm ci                         PASS — 61 packages, 0 vulnerabilities
 18 exact claim commands        PASS — each command from .factory/claims.json
 npm test                       PASS — 26 Chromium tests
-npm run test:unit              PASS — 12 Vitest tests
+npm run test:unit              PASS — 13 Vitest tests
 npm run typecheck              PASS
 npm run lint                   PASS
 npm run build                  PASS — dist/ produced
