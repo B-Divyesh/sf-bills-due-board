@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bills-due-board-shell-v2';
+const CACHE_NAME = 'bills-due-board-shell-v3';
 const SHELL = [
   '/',
   '/index.html',
@@ -9,7 +9,8 @@ const SHELL = [
   '/assets/payment-horizon-1440.webp',
   '/assets/social-card.webp',
   '/icons/icon-192.png',
-  '/icons/icon-512.png'
+  '/icons/icon-512.png',
+  '/icons/icon-maskable-512.png'
 ];
 
 self.addEventListener('install', (event) => {

@@ -1,35 +1,56 @@
-# Bills Due Board — independent verification handoff
+# Bills Due Board — repair handoff
 
-**Verdict: FAIL**
+**Status: locally verified; live deployment verification follows the pushed commit.**
 
-- Tested commit: `8734d03f2989f1e1d932be9a44db5cc7f671ed0e`
-- Tested URL: <https://bills-due-board.sociobot.in>
-- Verified: 2026-08-28 14:31 UTC
-- Work order: `bills-due-board-verify-1`
+- Repair base: `77f4af5c45c6b52aac9fff721d3d972e348440e5`
+- Product: `bills-due-board` (`pwa-offline`, static deployment)
+- Work order: `bills-due-board-repair-1`
 
-The live static app now deploys successfully and its HTML, JS, CSS, service worker, and manifest match the candidate byte-for-byte. The first screen and one-click demo pass. All 11 exact claim commands pass after `npm ci`; the full Playwright suite passes 13/13; TypeScript, production build, and dependency audit pass. Lighthouse live mobile scores 100/100/100/100, axe has no serious/critical findings, and offline reload plus a simulated service-worker update pass.
+## Repairs
 
-Release remains blocked:
+- The registered Sociobot checkout now starts a hosted payment session. `npm run verify:checkout` checks the real endpoint without following it and observed `303 → checkout.dodopayments.com` on 2026-08-28.
+- Form and CSV parsing reject blank/zero amounts, fractions of a cent, impossible ISO dates, unknown statuses, unsafe links, and malformed paid dates. Values must be positive whole cents.
+- Saves now take a browser Web Lock, reload the latest encrypted document inside that lock, and apply the operation to it. A `BroadcastChannel` refreshes the other open tab after a successful save.
+- Vitest is restricted to `tests/unit/**/*.test.ts`; the Playwright suite is no longer collected by `npm run test:unit`.
+- The claim manifest now covers manual entry, local privacy/no third parties, daily license verification, licensed capacity, free accessibility, and exact cash-week sample amounts. Every claim has exactly one tagged Playwright test.
+- Invalid license results remain visible after reload. CSV exports prefix formula-like text cells with an apostrophe. The maskable icon is a real 512×512 PNG. Static routes explicitly rewrite known SPA routes and send unknown routes through the 404 response override.
+- All controls now have a 46px minimum target to preserve a measured 44px baseline after layout rounding; bill actions wrap at 200% text size on 390px screens.
 
-- The production **Buy a license** endpoint returns HTTP 404.
-- Manual and CSV entry accept blank amounts as zero; fractional cents are rounded away; CSV accepts impossible dates and invalid statuses.
-- Stale writes from two open tabs silently delete the first tab’s newly added bill.
-- `npm run test:unit` fails before running tests because Vitest collects the Playwright file.
-- Public manual-entry, privacy, verification-frequency, unlimited-license, and free-accessibility claims are absent or inadequately represented in `.factory/claims.json`.
+## Regression coverage
 
-Medium findings: undersized touch targets, broken 200% text reflow, no persistent invalid-license notice, CSV formula injection, a 512×444 image declared as a 512×512 maskable icon, and soft-404 HTTP status.
+- `tests/unit/data-validation.test.ts`: financial/date/status validation, CSV formula neutralization, maskable-icon dimensions, 404 configuration, and claim-to-test mapping.
+- `tests/product.spec.ts`: exact daily cash-week amounts; keyboard mobile manual entry; invalid form and CSV inputs; stale two-tab writes with `BroadcastChannel` disabled; unlimited licensed imports; unlicensed accessibility; invalid license persistence; formula-safe download; mobile targets and 200% reflow.
+- `scripts/verify-checkout.mjs`: live checkout endpoint must return 302/303 to the hosted Dodo checkout.
 
-Detailed evidence and reproductions are in [`.factory/verification.md`](verification.md). Screenshots, Lighthouse JSON, browser checks, and factory URL-verifier output are in `.factory/qa-artifacts/`.
+## Local verification (2026-08-28)
 
-## Commands rerun
+```text
+npm ci                         PASS — 61 packages, 0 vulnerabilities
+npm run test:unit              PASS — 10 tests
+npm run typecheck              PASS
+npm run lint                   PASS
+npm test                       PASS — 20 Chromium tests
+npm run build                  PASS — dist/ produced
+npm audit --omit=dev           PASS — 0 vulnerabilities
+npm run verify:checkout        PASS — 303 → checkout.dodopayments.com
+```
+
+The Playwright suite covers desktop plus 390px mobile, keyboard form use, axe serious/critical findings on the core routes, offline demo reload, storage isolation/encryption, privacy request observation, and service-worker registration. The current production bundle is 36,123 bytes JS (11,730 gzip) and 15,935 bytes CSS (4,320 gzip); the mobile hero is 75,202 bytes.
+
+## Run and deploy
 
 ```sh
 npm ci
 npm test
 npm run test:unit
-npx tsc --noEmit
+npm run typecheck
+npm run lint
 npm run build
-npm audit --omit=dev
+npm run verify:checkout
 ```
 
-To reconsider release, fix all high-severity findings without removing honest functionality, add regression/claim tests, deploy the exact repaired candidate, and repeat independent verification against the live URL.
+The deployment artifact remains `dist/` with `index.html` at its root. Push `main` to use the existing static deployment configuration. Demo is `/demo`; it uses `demo:bills-due-board:v1` and is discarded on leaving or reset.
+
+## Known gaps
+
+None in the local repair. The final live URL/response-policy/identity evidence is recorded in the follow-up deployment commit.

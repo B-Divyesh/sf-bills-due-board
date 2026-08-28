@@ -71,6 +71,19 @@ export async function saveBills(demo: boolean, bills: Bill[]): Promise<void> {
   }
 }
 
+export async function updateBills(demo: boolean, change: (latest: Bill[]) => Bill[]): Promise<Bill[]> {
+  const apply = async (): Promise<Bill[]> => {
+    const latest = await loadBills(demo);
+    const next = change(latest);
+    await saveBills(demo, next);
+    return next;
+  };
+  if ('locks' in navigator) {
+    return navigator.locks.request(`bills-due-board:${demo ? 'demo' : 'real'}:write`, apply);
+  }
+  return apply();
+}
+
 export async function resetDemoStorage(): Promise<void> {
   await new Promise<void>((resolve, reject) => {
     const request = indexedDB.deleteDatabase(DEMO_DB);

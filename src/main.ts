@@ -1,13 +1,14 @@
 import './styles.css';
 import { billsToCsv, csvToBills } from './csv';
-import { demoBills, loadBills, resetDemoStorage, saveBills } from './db';
+import { demoBills, loadBills, resetDemoStorage, saveBills, updateBills } from './db';
 import type { Bill, LicenseState } from './types';
+import { isCalendarDate, isHttpLink, parseCurrencyAmount } from './validation';
 
 const appRoot = document.querySelector<HTMLDivElement>('#app');
 if (!appRoot) throw new Error('The app could not start. Reload this page.');
 const app = appRoot;
 
-const BUILD_ID = 'v1.0.0';
+const BUILD_ID = 'v1.0.1';
 const PRODUCT_SLUG = 'bills-due-board';
 const BUY_URL = `https://api.sociobot.in/api/v1/products/${PRODUCT_SLUG}/checkout`;
 const LICENSE_KEY = `sb_license:${PRODUCT_SLUG}`;
@@ -15,6 +16,7 @@ const LICENSE_CACHE_KEY = `${LICENSE_KEY}:verdict`;
 const FREE_ACTIVE_LIMIT = 10;
 let renderSequence = 0;
 let toastTimer = 0;
+let boardChannel: BroadcastChannel | null = null;
 
 function escapeHtml(value: string): string {
   return value.replace(/[&<>'"]/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[character] ?? character);
@@ -115,7 +117,7 @@ function boardPage(demo: boolean): string {
 }
 
 function licensePanel(): string {
-  return `<section class="license-panel" aria-labelledby="license-title"><p class="eyebrow">Board capacity</p><h2 id="license-title">Free for 10 active bills</h2><p id="license-message">A $19 one-time license removes the active-bill limit.</p><div class="license-row"><a class="button primary" href="${BUY_URL}">Buy a license</a><label class="sr-only" for="license-token">License token</label><input id="license-token" type="text" autocomplete="off" placeholder="Paste your license token"><button class="secondary" type="button" id="verify-license">Activate license</button></div></section>`;
+  return `<section class="license-panel" aria-labelledby="license-title"><p class="eyebrow">Board capacity</p><h2 id="license-title">Free for 10 active bills</h2><p id="license-message" aria-live="polite">A $19 one-time license removes the active-bill limit.</p><div class="license-row"><a class="button primary" href="${BUY_URL}">Buy a license</a><label class="sr-only" for="license-token">License token</label><input id="license-token" type="text" autocomplete="off" placeholder="Paste your license token"><button class="secondary" type="button" id="verify-license">Activate license</button></div></section>`;
 }
 
 function privacyPage(): string {
@@ -134,6 +136,7 @@ async function render(): Promise<void> {
   const sequence = ++renderSequence;
   const path = cleanPath(location.pathname);
   const demo = isDemoRoute();
+  if (path !== '/demo' && path !== '/board') { boardChannel?.close(); boardChannel = null; }
   routeMeta(path);
   const content = path === '/' ? landingPage() : path === '/demo' || path === '/board' ? boardPage(demo) : path === '/privacy' ? privacyPage() : path === '/terms' ? termsPage() : notFoundPage();
   app.innerHTML = `${header(path, demo)}${content}${footer()}<div class="sr-only" aria-live="polite" id="route-announcer"></div>`;
@@ -182,7 +185,7 @@ function formatMoney(amount: number): string {
   return new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD' }).format(amount);
 }
 function safeLink(value: string): string {
-  try { const url = new URL(value); return ['http:', 'https:'].includes(url.protocol) ? url.href : ''; }
+  try { const url = new URL(value); return isHttpLink(value) ? url.href : ''; }
   catch { return ''; }
 }
 
@@ -195,6 +198,8 @@ async function setupBoard(demo: boolean, sequence: number): Promise<void> {
     document.querySelector<HTMLElement>('#board-tools')!.hidden = false;
     let view: 'due' | 'cash' = 'due';
     let license = demo ? { unlocked: true, message: 'Demo capacity has no limit.' } : await currentLicenseState();
+    boardChannel?.close();
+    boardChannel = new BroadcastChannel(`bills-due-board:${demo ? 'demo' : 'real'}`);
 
     const redraw = (): void => {
       const content = document.querySelector<HTMLDivElement>('#board-content');
@@ -207,14 +212,26 @@ async function setupBoard(demo: boolean, sequence: number): Promise<void> {
       content.innerHTML = boardMarkup(bills, view);
       bindBoardContent();
       const licenseMessage = document.querySelector('#license-message');
-      if (licenseMessage && license.unlocked) licenseMessage.textContent = license.message;
+      if (licenseMessage) licenseMessage.textContent = license.message;
       if (overdue.length) summary.textContent += ` · ${overdue.length} overdue`;
     };
 
-    const persist = async (): Promise<void> => {
-      try { await saveBills(demo, bills); }
-      catch (error) { if (errorBox) { errorBox.hidden = false; errorBox.textContent = `${error instanceof Error ? error.message : 'Bills were not saved.'} Export a CSV copy, then check browser storage settings.`; } }
+    const persist = async (change: (latest: Bill[]) => Bill[]): Promise<boolean> => {
+      try {
+        bills = await updateBills(demo, change);
+        boardChannel?.postMessage('changed');
+        if (errorBox) errorBox.hidden = true;
+        return true;
+      } catch (error) {
+        if (errorBox) { errorBox.hidden = false; errorBox.textContent = `${error instanceof Error ? error.message : 'Bills were not saved.'} Export a CSV copy, then check browser storage settings.`; }
+        return false;
+      }
     };
+
+    boardChannel.addEventListener('message', async () => {
+      try { bills = await loadBills(demo); redraw(); showToast('This board was updated in another tab.'); }
+      catch { /* The persistent storage error remains available on the active tab. */ }
+    });
 
     const bindBoardContent = (): void => {
       document.querySelectorAll<HTMLButtonElement>('[data-view]').forEach((button) => button.addEventListener('click', () => { view = button.dataset.view === 'cash' ? 'cash' : 'due'; redraw(); }));
@@ -286,7 +303,13 @@ async function setupBoard(demo: boolean, sequence: number): Promise<void> {
         const newActive = imported.filter((bill) => bill.status === 'planned').length;
         const activeCount = bills.filter((bill) => bill.status === 'planned').length;
         if (!license.unlocked && activeCount + newActive > FREE_ACTIVE_LIMIT) throw new Error(`This import would pass the free limit of ${FREE_ACTIVE_LIMIT} active bills. Mark bills paid or add a license.`);
-        bills = [...bills, ...imported]; await persist(); redraw(); showToast(`Imported ${imported.length} ${imported.length === 1 ? 'bill' : 'bills'}.`);
+        const saved = await persist((latest) => {
+          const currentActive = latest.filter((bill) => bill.status === 'planned').length;
+          if (!license.unlocked && currentActive + newActive > FREE_ACTIVE_LIMIT) throw new Error(`This import would pass the free limit of ${FREE_ACTIVE_LIMIT} active bills. Mark bills paid or add a license.`);
+          return [...latest, ...imported];
+        });
+        if (!saved) throw new Error(errorBox?.textContent?.replace(' Export a CSV copy, then check browser storage settings.', '') || 'The CSV could not be saved.');
+        redraw(); showToast(`Imported ${imported.length} ${imported.length === 1 ? 'bill' : 'bills'}.`);
       } catch (error) { showToast(error instanceof Error ? error.message : 'The CSV could not be imported. Check the file and try again.'); }
       input.value = '';
     });
@@ -297,19 +320,27 @@ async function setupBoard(demo: boolean, sequence: number): Promise<void> {
       const formData = new FormData(form);
       const id = String(formData.get('bill-id') ?? '');
       const vendor = String(formData.get('vendor') ?? '').trim();
-      const amount = Number(formData.get('amount'));
+      const amount = parseCurrencyAmount(String(formData.get('amount') ?? ''));
       const dueDate = String(formData.get('due-date') ?? '');
       const attachment = String(formData.get('attachment') ?? '').trim();
       const error = document.querySelector<HTMLParagraphElement>('#bill-form-error')!;
       if (!vendor) { error.textContent = 'The bill needs a vendor. Add the name and save again.'; return; }
-      if (!Number.isFinite(amount) || amount < 0) { error.textContent = 'The amount is not valid. Enter zero or a positive number.'; return; }
-      if (!dueDate) { error.textContent = 'The bill needs a due date. Choose one and save again.'; return; }
+      if (amount === null) { error.textContent = 'The amount is not valid. Enter a number above zero with no more than two decimal places.'; return; }
+      if (!isCalendarDate(dueDate)) { error.textContent = 'The bill needs a real due date. Choose one and save again.'; return; }
       if (attachment && !safeLink(attachment)) { error.textContent = 'The attachment link must start with http:// or https://.'; return; }
       const now = new Date().toISOString();
-      const previous = bills.find((bill) => bill.id === id);
-      const next: Bill = { id: id || crypto.randomUUID(), vendor, amount, dueDate, category: String(formData.get('category') ?? 'Uncategorised'), attachment, notes: String(formData.get('notes') ?? '').trim(), status: previous?.status ?? 'planned', paidAt: previous?.paidAt ?? '', createdAt: previous?.createdAt ?? now, updatedAt: now };
-      bills = previous ? bills.map((bill) => bill.id === id ? next : bill) : [...bills, next];
-      await persist(); document.querySelector<HTMLDialogElement>('#bill-dialog')?.close(); redraw(); showToast(previous ? 'Bill changes saved.' : 'Bill added to the queue.');
+      const wasEditing = Boolean(id);
+      const newId = id || crypto.randomUUID();
+      const saved = await persist((latest) => {
+        const previous = latest.find((bill) => bill.id === id);
+        if (!license.unlocked && !previous && latest.filter((bill) => bill.status === 'planned').length >= FREE_ACTIVE_LIMIT) {
+          throw new Error(`The free board holds ${FREE_ACTIVE_LIMIT} active bills. Mark one paid or add a license.`);
+        }
+        const next: Bill = { id: newId, vendor, amount, dueDate, category: String(formData.get('category') ?? 'Uncategorised'), attachment, notes: String(formData.get('notes') ?? '').trim(), status: previous?.status ?? 'planned', paidAt: previous?.paidAt ?? '', createdAt: previous?.createdAt ?? now, updatedAt: now };
+        return previous ? latest.map((bill) => bill.id === id ? next : bill) : [...latest, next];
+      });
+      if (!saved) return;
+      document.querySelector<HTMLDialogElement>('#bill-dialog')?.close(); redraw(); showToast(wasEditing ? 'Bill changes saved.' : 'Bill added to the queue.');
     });
 
     document.querySelector<HTMLFormElement>('#paid-form')?.addEventListener('submit', async (event) => {
@@ -319,13 +350,18 @@ async function setupBoard(demo: boolean, sequence: number): Promise<void> {
       const paidAt = String(formData.get('paid-date') ?? '');
       const previous = bills.find((bill) => bill.id === id);
       if (!previous || !paidAt) return;
-      bills = bills.map((bill) => bill.id === id ? { ...bill, status: 'paid', paidAt, updatedAt: new Date().toISOString() } : bill);
-      await persist(); document.querySelector<HTMLDialogElement>('#paid-dialog')?.close(); redraw();
-      showToast(`${previous.vendor} marked paid.`, async () => { bills = bills.map((bill) => bill.id === id ? { ...bill, status: 'planned', paidAt: '', updatedAt: new Date().toISOString() } : bill); await persist(); redraw(); showToast('Payment mark undone.'); });
+      if (!isCalendarDate(paidAt)) return;
+      if (!await persist((latest) => latest.map((bill) => bill.id === id ? { ...bill, status: 'paid', paidAt, updatedAt: new Date().toISOString() } : bill))) return;
+      document.querySelector<HTMLDialogElement>('#paid-dialog')?.close(); redraw();
+      showToast(`${previous.vendor} marked paid.`, async () => {
+        if (await persist((latest) => latest.map((bill) => bill.id === id ? { ...bill, status: 'planned', paidAt: '', updatedAt: new Date().toISOString() } : bill))) {
+          redraw(); showToast('Payment mark undone.');
+        }
+      });
     });
 
     document.querySelector<HTMLFormElement>('#delete-form')?.addEventListener('submit', async (event) => {
-      event.preventDefault(); const id = String(new FormData(event.currentTarget as HTMLFormElement).get('delete-id') ?? ''); const deleted = bills.find((bill) => bill.id === id); bills = bills.filter((bill) => bill.id !== id); await persist(); document.querySelector<HTMLDialogElement>('#delete-dialog')?.close(); redraw(); showToast(deleted ? `${deleted.vendor} deleted.` : 'Bill deleted.');
+      event.preventDefault(); const id = String(new FormData(event.currentTarget as HTMLFormElement).get('delete-id') ?? ''); const deleted = bills.find((bill) => bill.id === id); if (!await persist((latest) => latest.filter((bill) => bill.id !== id))) return; document.querySelector<HTMLDialogElement>('#delete-dialog')?.close(); redraw(); showToast(deleted ? `${deleted.vendor} deleted.` : 'Bill deleted.');
     });
     document.querySelectorAll<HTMLButtonElement>('[data-close-dialog]').forEach((button) => button.addEventListener('click', () => button.closest('dialog')?.close()));
 
@@ -387,7 +423,7 @@ function paidView(paid: Bill[]): string {
 }
 
 function dialogs(): string {
-  return `<dialog id="bill-dialog" aria-labelledby="bill-dialog-title"><div class="dialog-head"><h2 id="bill-dialog-title">Add a planned bill</h2><button class="quiet" type="button" data-close-dialog aria-label="Close bill form">Close</button></div><form id="bill-form" class="dialog-body" novalidate><input type="hidden" name="bill-id"><div class="form-grid"><div class="field full"><label for="vendor">Vendor</label><input id="vendor" name="vendor" required maxlength="100" autocomplete="organization"></div><div class="field"><label for="amount">Amount in USD</label><input id="amount" name="amount" required type="number" min="0" step="0.01" inputmode="decimal"></div><div class="field"><label for="due-date">Due date</label><input id="due-date" name="due-date" required type="date"></div><div class="field"><label for="category">Category</label><select id="category" name="category"><option>Utilities</option><option>Rent</option><option>Supplies</option><option>Software</option><option>Insurance</option><option>Tax</option><option>Uncategorised</option></select></div><div class="field"><label for="attachment">Attachment link</label><input id="attachment" name="attachment" type="url" inputmode="url" placeholder="https://"><p class="field-hint">Add a link to a file you already control.</p></div><div class="field full"><label for="notes">Notes</label><textarea id="notes" name="notes" maxlength="300"></textarea></div></div><p class="form-error" id="bill-form-error" role="alert"></p><div class="dialog-actions"><button class="quiet" type="button" data-close-dialog>Cancel</button><button class="primary" type="submit">Save bill</button></div></form></dialog>
+  return `<dialog id="bill-dialog" aria-labelledby="bill-dialog-title"><div class="dialog-head"><h2 id="bill-dialog-title">Add a planned bill</h2><button class="quiet" type="button" data-close-dialog aria-label="Close bill form">Close</button></div><form id="bill-form" class="dialog-body" novalidate><input type="hidden" name="bill-id"><div class="form-grid"><div class="field full"><label for="vendor">Vendor</label><input id="vendor" name="vendor" required maxlength="100" autocomplete="organization"></div><div class="field"><label for="amount">Amount in USD</label><input id="amount" name="amount" required type="number" min="0.01" step="0.01" inputmode="decimal"></div><div class="field"><label for="due-date">Due date</label><input id="due-date" name="due-date" required type="date"></div><div class="field"><label for="category">Category</label><select id="category" name="category"><option>Utilities</option><option>Rent</option><option>Supplies</option><option>Software</option><option>Insurance</option><option>Tax</option><option>Uncategorised</option></select></div><div class="field"><label for="attachment">Attachment link</label><input id="attachment" name="attachment" type="url" inputmode="url" placeholder="https://"><p class="field-hint">Add a link to a file you already control.</p></div><div class="field full"><label for="notes">Notes</label><textarea id="notes" name="notes" maxlength="300"></textarea></div></div><p class="form-error" id="bill-form-error" role="alert"></p><div class="dialog-actions"><button class="quiet" type="button" data-close-dialog>Cancel</button><button class="primary" type="submit">Save bill</button></div></form></dialog>
   <dialog id="paid-dialog" aria-labelledby="paid-title"><div class="dialog-head"><h2 id="paid-title">Confirm this payment</h2><button class="quiet" type="button" data-close-dialog aria-label="Close payment form">Close</button></div><form id="paid-form" class="dialog-body"><p><strong id="paid-vendor"></strong> · <span id="paid-amount"></span></p><p>This records your confirmation only. It does not move money.</p><input id="paid-id" type="hidden" name="paid-id"><div class="field"><label for="paid-date">Paid date</label><input id="paid-date" name="paid-date" type="date" required></div><div class="dialog-actions"><button class="quiet" type="button" data-close-dialog>Keep planned</button><button class="primary" type="submit">Confirm paid</button></div></form></dialog>
   <dialog id="delete-dialog" aria-labelledby="delete-title"><div class="dialog-head"><h2 id="delete-title">Delete this bill?</h2><button class="quiet" type="button" data-close-dialog aria-label="Close delete form">Close</button></div><form id="delete-form" class="dialog-body"><p><strong id="delete-vendor"></strong> will be removed from this board.</p><input id="delete-id" type="hidden" name="delete-id"><div class="dialog-actions"><button class="quiet" type="button" data-close-dialog>Keep bill</button><button class="primary danger" id="confirm-delete" type="submit">Delete bill</button></div></form></dialog>`;
 }

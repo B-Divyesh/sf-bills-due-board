@@ -33,16 +33,16 @@ a:hover { text-decoration-thickness: 3px; }
 .shell { width: min(var(--max), calc(100% - 32px)); margin-inline: auto; }
 .site-header { border-bottom: 2px solid var(--ink); background: color-mix(in srgb, var(--paper) 94%, transparent); }
 .header-row { min-height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
-.wordmark { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); font: 700 1.05rem Georgia, serif; text-decoration: none; }
+.wordmark { display: inline-flex; min-width: 46px; min-height: 46px; align-items: center; gap: 10px; color: var(--ink); font: 700 1.05rem Georgia, serif; text-decoration: none; }
 .wordmark-mark { width: 34px; height: 34px; border: 2px solid; border-radius: 50%; position: relative; background: repeating-conic-gradient(var(--ink) 0 5deg, transparent 5deg 45deg); }
 .wordmark-mark::after { content: ""; position: absolute; width: 9px; height: 9px; border: 5px solid var(--paper); background: var(--due); border-radius: 50%; top: -4px; left: -4px; }
-.site-nav { display: flex; gap: 6px; align-items: center; }
-.site-nav a { color: var(--ink); min-height: 44px; padding: 12px 10px; display: inline-flex; align-items: center; font-weight: 700; text-decoration: none; border-bottom: 3px solid transparent; }
+.site-nav { display: flex; gap: 8px; align-items: center; }
+.site-nav a { color: var(--ink); min-height: 46px; padding: 12px 10px; display: inline-flex; align-items: center; font-weight: 700; text-decoration: none; border-bottom: 3px solid transparent; }
 .site-nav a[aria-current="page"], .site-nav a:hover { border-color: var(--cobalt); }
 .demo-banner { background: var(--cobalt); color: #fff; }
 .demo-banner .shell { min-height: 48px; display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; padding-block: 4px; }
 .demo-banner strong { font-size: .9rem; }
-.demo-banner button, .demo-banner a { color: #fff; background: transparent; border: 0; min-height: 38px; padding: 6px 10px; font-weight: 700; text-decoration: underline; }
+.demo-banner button, .demo-banner a { display: inline-flex; min-height: 46px; align-items: center; color: #fff; background: transparent; border: 0; padding: 8px 10px; font-weight: 700; text-decoration: underline; }
 .offline-banner { margin: 0; padding: 10px 16px; background: var(--ochre); color: #fff; text-align: center; font-weight: 700; }
 main { min-height: 65vh; }
 h1, h2, h3 { font-family: Georgia, 'Times New Roman', serif; line-height: 1.05; text-wrap: balance; }
@@ -57,7 +57,7 @@ p { line-height: 1.55; }
 .hero-copy { padding: 82px 52px 72px 0; display: flex; flex-direction: column; justify-content: center; }
 .hero-copy > p:not(.eyebrow) { max-width: 620px; font-size: 1.22rem; margin: 24px 0 28px; }
 .hero-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-.button, button.primary, button.secondary, button.quiet, input[type="file"]::file-selector-button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 2px solid var(--ink); padding: 10px 16px; font-weight: 800; text-decoration: none; background: var(--surface); color: var(--ink); box-shadow: 4px 4px 0 var(--ink); transition: transform 160ms ease, box-shadow 160ms ease; }
+.button, button.primary, button.secondary, button.quiet, input[type="file"]::file-selector-button { display: inline-flex; min-height: 46px; align-items: center; justify-content: center; gap: 8px; border: 2px solid var(--ink); padding: 10px 16px; font-weight: 800; text-decoration: none; background: var(--surface); color: var(--ink); box-shadow: 4px 4px 0 var(--ink); transition: transform 160ms ease, box-shadow 160ms ease; }
 .button.primary, button.primary { background: var(--ink); color: var(--paper); }
 .button:hover, button.primary:hover, button.secondary:hover { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--ink); }
 button.quiet { border-color: transparent; box-shadow: none; background: transparent; padding-inline: 10px; }
@@ -123,9 +123,9 @@ button.danger { color: var(--due); }
 .bill-name strong { display: block; }
 .bill-name small, .bill-category { color: var(--muted); }
 .bill-amount { text-align: right; font: 700 1.2rem Georgia, serif; font-variant-numeric: tabular-nums; }
-.bill-actions { display: flex; gap: 8px; align-items: center; }
+.bill-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .bill-actions button { white-space: nowrap; }
-.paid-button { background: var(--mint); color: #fff; border: 2px solid var(--ink); min-height: 44px; padding: 8px 13px; font-weight: 800; box-shadow: 3px 3px 0 var(--ink); }
+.paid-button { background: var(--mint); color: #fff; border: 2px solid var(--ink); min-height: 46px; padding: 8px 13px; font-weight: 800; box-shadow: 3px 3px 0 var(--ink); }
 .empty-state { padding: 64px 24px; text-align: center; }
 .empty-geometry { width: 90px; height: 90px; margin: 0 auto 18px; border: 12px double var(--rule); border-radius: 50%; position: relative; }
 .empty-geometry::after { content: ""; position: absolute; width: 16px; height: 16px; background: var(--cobalt); border-radius: 50%; right: -4px; top: 8px; }
@@ -209,8 +209,8 @@ dialog::backdrop { background: color-mix(in srgb, var(--ink) 72%, transparent); 
   .shell { width: min(100% - 24px, var(--max)); }
   .header-row { min-height: 64px; }
   .wordmark span:last-child { display: none; }
-  .site-nav { gap: 0; }
-  .site-nav a { padding-inline: 7px; font-size: .83rem; }
+  .site-nav { gap: 8px; }
+  .site-nav a { padding-inline: 5px; font-size: .83rem; }
   h1 { font-size: 3rem; }
   .facts { grid-template-columns: 1fr; gap: 10px; margin-top: 32px; }
   .hero-art { min-height: 330px; }
@@ -226,11 +226,13 @@ dialog::backdrop { background: color-mix(in srgb, var(--ink) 72%, transparent); 
   .board-tools > * { width: 100%; }
   .board-tools .primary { grid-column: 1 / -1; }
   .view-tabs { display: grid; grid-template-columns: 1fr 1fr; width: 100%; }
-  .bill-row { grid-template-columns: 1fr auto; gap: 8px 12px; padding: 16px 14px; }
+  .bill-row { grid-template-columns: minmax(0, 1fr) auto; gap: 8px 12px; padding: 16px 14px; }
   .due-mark { grid-column: 1; }
   .bill-amount { grid-column: 2; grid-row: 1; }
   .bill-name { grid-column: 1 / -1; }
   .bill-actions { grid-column: 1 / -1; }
+  .bill-actions button { flex: 1 1 auto; white-space: normal; }
+  .bill-amount { max-width: 100%; overflow-wrap: anywhere; }
   .cash-view { padding: 18px 12px; overflow-x: auto; }
   .cash-chart { min-width: 540px; }
   .form-grid { grid-template-columns: 1fr; }

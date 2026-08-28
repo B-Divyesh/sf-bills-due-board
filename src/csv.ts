@@ -1,7 +1,9 @@
 import type { Bill } from './types';
+import { isCalendarDate, isHttpLink, parseCurrencyAmount } from './validation';
 
 function escapeCell(value: string | number): string {
-  const text = String(value);
+  const raw = String(value);
+  const text = /^[=+\-@\t\r]/.test(raw) ? `'${raw}` : raw;
   return /[",\n\r]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
 }
 
@@ -43,16 +45,22 @@ export function csvToBills(text: string): Bill[] {
   const now = new Date().toISOString();
   return rows.slice(1).map((row, index) => {
     const vendor = value(row, 'vendor');
-    const amount = Number(value(row, 'amount'));
+    const amount = parseCurrencyAmount(value(row, 'amount'));
     const dueDate = value(row, 'due_date');
     if (!vendor) throw new Error(`Row ${index + 2} has no vendor. Add one and import again.`);
-    if (!Number.isFinite(amount) || amount < 0) throw new Error(`Row ${index + 2} has an invalid amount. Use a positive number.`);
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(dueDate) || Number.isNaN(new Date(`${dueDate}T12:00:00`).getTime())) throw new Error(`Row ${index + 2} has an invalid due date. Use YYYY-MM-DD.`);
-    const status = value(row, 'status') === 'paid' ? 'paid' : 'planned';
+    if (amount === null) throw new Error(`Row ${index + 2} has an invalid amount. Use a number above zero with no more than two decimal places.`);
+    if (!isCalendarDate(dueDate)) throw new Error(`Row ${index + 2} has an invalid due date. Use a real date in YYYY-MM-DD format.`);
+    const rawStatus = value(row, 'status');
+    if (rawStatus && rawStatus !== 'planned' && rawStatus !== 'paid') throw new Error(`Row ${index + 2} has an invalid status. Use planned or paid.`);
+    const status = rawStatus === 'paid' ? 'paid' : 'planned';
+    const attachment = value(row, 'attachment');
+    if (!isHttpLink(attachment)) throw new Error(`Row ${index + 2} has an invalid attachment link. Use http:// or https://.`);
+    const paidAt = value(row, 'paid_date');
+    if (paidAt && !isCalendarDate(paidAt)) throw new Error(`Row ${index + 2} has an invalid paid date. Use a real date in YYYY-MM-DD format.`);
     return {
       id: crypto.randomUUID(), vendor, amount, dueDate,
-      category: value(row, 'category') || 'Uncategorised', attachment: value(row, 'attachment'), notes: value(row, 'notes'),
-      status, paidAt: status === 'paid' ? value(row, 'paid_date') || dueDate : '', createdAt: now, updatedAt: now,
+      category: value(row, 'category') || 'Uncategorised', attachment, notes: value(row, 'notes'),
+      status, paidAt: status === 'paid' ? paidAt || dueDate : '', createdAt: now, updatedAt: now,
     } satisfies Bill;
   });
 }

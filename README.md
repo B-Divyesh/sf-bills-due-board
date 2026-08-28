@@ -43,7 +43,11 @@ Playwright 1.58.2 is pinned. The worker image already provides its Chromium brow
 
 ```sh
 npm test
+npm run test:unit
+npm run typecheck
+npm run lint
 npm run build
+npm run verify:checkout
 ```
 
 The exact production build command is `npm run build`. It writes `dist/index.html` and the static PWA files under `dist/`.
