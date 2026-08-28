@@ -1,0 +1,377 @@
+{
+  "1440:/": {
+    "status": 200,
+    "structure": {
+      "lang": "en",
+      "title": "Bills Due Board — See bills by due date",
+      "h1": [
+        "See every bill by due date"
+      ],
+      "main": 1,
+      "landmarks": [
+        "header",
+        "nav",
+        "main",
+        "footer"
+      ],
+      "imagesWithoutAlt": 0,
+      "horizontalOverflow": 0
+    },
+    "axeSeriousCritical": [],
+    "consoleErrors": [],
+    "pageErrors": [],
+    "failedRequests": [],
+    "crossOriginRequests": [],
+    "sub44Targets": []
+  },
+  "1440:/demo": {
+    "status": 200,
+    "structure": {
+      "lang": "en",
+      "title": "Demo — Bills Due Board",
+      "h1": [
+        "Plan bills. Confirm payments."
+      ],
+      "main": 1,
+      "landmarks": [
+        "header",
+        "nav",
+        "main",
+        "footer"
+      ],
+      "imagesWithoutAlt": 0,
+      "horizontalOverflow": 0
+    },
+    "axeSeriousCritical": [],
+    "consoleErrors": [],
+    "pageErrors": [],
+    "failedRequests": [],
+    "crossOriginRequests": [],
+    "sub44Targets": [
+      {
+        "name": "Choose a CSV file to import",
+        "tag": "INPUT",
+        "width": 1,
+        "height": 1
+      }
+    ]
+  },
+  "1440:/board": {
+    "status": 200,
+    "structure": {
+      "lang": "en",
+      "title": "Your bills — Bills Due Board",
+      "h1": [
+        "Plan bills. Confirm payments."
+      ],
+      "main": 1,
+      "landmarks": [
+        "header",
+        "nav",
+        "main",
+        "footer"
+      ],
+      "imagesWithoutAlt": 0,
+      "horizontalOverflow": 0
+    },
+    "axeSeriousCritical": [],
+    "consoleErrors": [],
+    "pageErrors": [],
+    "failedRequests": [],
+    "crossOriginRequests": [],
+    "sub44Targets": [
+      {
+        "name": "Choose a CSV file to import",
+        "tag": "INPUT",
+        "width": 1,
+        "height": 1
+      }
+    ]
+  },
+  "1440:/privacy": {
+    "status": 200,
+    "structure": {
+      "lang": "en",
+      "title": "Privacy — Bills Due Board",
+      "h1": [
+        "Your bills stay in your browser"
+      ],
+      "main": 1,
+      "landmarks": [
+        "header",
+        "nav",
+        "main",
+        "footer"
+      ],
+      "imagesWithoutAlt": 0,
+      "horizontalOverflow": 0
+    },
+    "axeSeriousCritical": [],
+    "consoleErrors": [],
+    "pageErrors": [],
+    "failedRequests": [],
+    "crossOriginRequests": [],
+    "sub44Targets": []
+  },
+  "1440:/terms": {
+    "status": 200,
+    "structure": {
+      "lang": "en",
+      "title": "Terms — Bills Due Board",
+      "h1": [
+        "Terms for using this board"
+      ],
+      "main": 1,
+      "landmarks": [
+        "header",
+        "nav",
+        "main",
+        "footer"
+      ],
+      "imagesWithoutAlt": 0,
+      "horizontalOverflow": 0
+    },
+    "axeSeriousCritical": [],
+    "consoleErrors": [],
+    "pageErrors": [],
+    "failedRequests": [],
+    "crossOriginRequests": [],
+    "sub44Targets": []
+  },
+  "1440:/not-a-real-route": {
+    "status": 404,
+    "structure": {
+      "lang": "en",
+      "title": "Page not found — Bills Due Board",
+      "h1": [
+        "This page is not on the board"
+      ],
+      "main": 1,
+      "landmarks": [
+        "header",
+        "nav",
+        "main",
+        "footer"
+      ],
+      "imagesWithoutAlt": 0,
+      "horizontalOverflow": 0
+    },
+    "axeSeriousCritical": [],
+    "consoleErrors": [
+      "Failed to load resource: the server responded with a status of 404 ()"
+    ],
+    "pageErrors": [],
+    "failedRequests": [],
+    "crossOriginRequests": [],
+    "sub44Targets": []
+  },
+  "390:/": {
+    "status": 200,
+    "structure": {
+      "lang": "en",
+      "title": "Bills Due Board — See bills by due date",
+      "h1": [
+        "See every bill by due date"
+      ],
+      "main": 1,
+      "landmarks": [
+        "header",
+        "nav",
+        "main",
+        "footer"
+      ],
+      "imagesWithoutAlt": 0,
+      "horizontalOverflow": 0
+    },
+    "axeSeriousCritical": [],
+    "consoleErrors": [],
+    "pageErrors": [],
+    "failedRequests": [],
+    "crossOriginRequests": [],
+    "sub44Targets": []
+  },
+  "390:/demo": {
+    "status": 200,
+    "structure": {
+      "lang": "en",
+      "title": "Demo — Bills Due Board",
+      "h1": [
+        "Plan bills. Confirm payments."
+      ],
+      "main": 1,
+      "landmarks": [
+        "header",
+        "nav",
+        "main",
+        "footer"
+      ],
+      "imagesWithoutAlt": 0,
+      "horizontalOverflow": 0
+    },
+    "axeSeriousCritical": [],
+    "consoleErrors": [],
+    "pageErrors": [],
+    "failedRequests": [],
+    "crossOriginRequests": [],
+    "sub44Targets": [
+      {
+        "name": "Choose a CSV file to import",
+        "tag": "INPUT",
+        "width": 1,
+        "height": 1
+      }
+    ]
+  },
+  "390:/board": {
+    "status": 200,
+    "structure": {
+      "lang": "en",
+      "title": "Your bills — Bills Due Board",
+      "h1": [
+        "Plan bills. Confirm payments."
+      ],
+      "main": 1,
+      "landmarks": [
+        "header",
+        "nav",
+        "main",
+        "footer"
+      ],
+      "imagesWithoutAlt": 0,
+      "horizontalOverflow": 0
+    },
+    "axeSeriousCritical": [],
+    "consoleErrors": [],
+    "pageErrors": [],
+    "failedRequests": [],
+    "crossOriginRequests": [],
+    "sub44Targets": [
+      {
+        "name": "Choose a CSV file to import",
+        "tag": "INPUT",
+        "width": 1,
+        "height": 1
+      }
+    ]
+  },
+  "390:/privacy": {
+    "status": 200,
+    "structure": {
+      "lang": "en",
+      "title": "Privacy — Bills Due Board",
+      "h1": [
+        "Your bills stay in your browser"
+      ],
+      "main": 1,
+      "landmarks": [
+        "header",
+        "nav",
+        "main",
+        "footer"
+      ],
+      "imagesWithoutAlt": 0,
+      "horizontalOverflow": 0
+    },
+    "axeSeriousCritical": [],
+    "consoleErrors": [],
+    "pageErrors": [],
+    "failedRequests": [],
+    "crossOriginRequests": [],
+    "sub44Targets": []
+  },
+  "390:/terms": {
+    "status": 200,
+    "structure": {
+      "lang": "en",
+      "title": "Terms — Bills Due Board",
+      "h1": [
+        "Terms for using this board"
+      ],
+      "main": 1,
+      "landmarks": [
+        "header",
+        "nav",
+        "main",
+        "footer"
+      ],
+      "imagesWithoutAlt": 0,
+      "horizontalOverflow": 0
+    },
+    "axeSeriousCritical": [],
+    "consoleErrors": [],
+    "pageErrors": [],
+    "failedRequests": [],
+    "crossOriginRequests": [],
+    "sub44Targets": []
+  },
+  "390:/not-a-real-route": {
+    "status": 404,
+    "structure": {
+      "lang": "en",
+      "title": "Page not found — Bills Due Board",
+      "h1": [
+        "This page is not on the board"
+      ],
+      "main": 1,
+      "landmarks": [
+        "header",
+        "nav",
+        "main",
+        "footer"
+      ],
+      "imagesWithoutAlt": 0,
+      "horizontalOverflow": 0
+    },
+    "axeSeriousCritical": [],
+    "consoleErrors": [
+      "Failed to load resource: the server responded with a status of 404 ()"
+    ],
+    "pageErrors": [],
+    "failedRequests": [],
+    "crossOriginRequests": [],
+    "sub44Targets": []
+  },
+  "keyboard": {
+    "opened": true,
+    "initialDialogFocus": {
+      "tag": "INPUT",
+      "id": "vendor"
+    },
+    "saved": 0,
+    "persisted": 1,
+    "activeAfterSave": {
+      "tag": "H1",
+      "text": "Plan bills. Confirm payments."
+    },
+    "focusTrail": [
+      {
+        "tag": "BUTTON",
+        "name": "Add a bill",
+        "outline": "rgb(169, 99, 0) solid 3px"
+      }
+    ]
+  },
+  "reducedMotion": {
+    "mediaMatches": true,
+    "rowAnimationDuration": "1e-05s",
+    "barAnimationDuration": null,
+    "buttonTransitionDuration": null
+  },
+  "textResize200": {
+    "horizontalOverflow": 0,
+    "bodyHeight": 3923,
+    "mainVisible": true
+  },
+  "pwa": {
+    "before": {
+      "controller": "https://bills-due-board.sociobot.in/sw.js",
+      "caches": [
+        "bills-due-board-shell-v4"
+      ],
+      "registration": "https://bills-due-board.sociobot.in/sw.js"
+    },
+    "offlineText": 1,
+    "offlineBanner": 1,
+    "errors": []
+  }
+}

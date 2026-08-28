@@ -1,0 +1,127 @@
+URL https://bills-due-board.sociobot.in/
+HTTP/2 200
+content-type: text/html
+date: Fri, 28 Aug 2026 17:56:49 GMT
+cache-control: public, must-revalidate, max-age=30
+etag: "68286777"
+last-modified: Fri, 28 Aug 2026 17:40:38 GMT
+content-length: 1890
+strict-transport-security: max-age=10886400; includeSubDomains; preload
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
+x-xss-protection: 1; mode=block
+x-dns-prefetch-control: off
+content-security-policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' https://api.sociobot.in; object-src 'none'; base-uri 'self'; form-action 'self' https://api.sociobot.in; frame-ancestors 'none'
+permissions-policy: camera=(), microphone=(), geolocation=(), payment=()
+
+URL https://bills-due-board.sociobot.in/demo
+HTTP/2 200
+content-type: text/html
+date: Fri, 28 Aug 2026 17:56:49 GMT
+cache-control: public, must-revalidate, max-age=30
+etag: "68286777"
+last-modified: Fri, 28 Aug 2026 17:40:38 GMT
+content-length: 1890
+strict-transport-security: max-age=10886400; includeSubDomains; preload
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
+x-xss-protection: 1; mode=block
+x-dns-prefetch-control: off
+content-security-policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' https://api.sociobot.in; object-src 'none'; base-uri 'self'; form-action 'self' https://api.sociobot.in; frame-ancestors 'none'
+permissions-policy: camera=(), microphone=(), geolocation=(), payment=()
+
+URL https://bills-due-board.sociobot.in/board
+HTTP/2 200
+content-type: text/html
+date: Fri, 28 Aug 2026 17:56:49 GMT
+cache-control: public, must-revalidate, max-age=30
+etag: "68286777"
+last-modified: Fri, 28 Aug 2026 17:40:38 GMT
+content-length: 1890
+strict-transport-security: max-age=10886400; includeSubDomains; preload
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
+x-xss-protection: 1; mode=block
+x-dns-prefetch-control: off
+content-security-policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' https://api.sociobot.in; object-src 'none'; base-uri 'self'; form-action 'self' https://api.sociobot.in; frame-ancestors 'none'
+permissions-policy: camera=(), microphone=(), geolocation=(), payment=()
+
+URL https://bills-due-board.sociobot.in/privacy
+HTTP/2 200
+content-type: text/html
+date: Fri, 28 Aug 2026 17:56:49 GMT
+cache-control: public, must-revalidate, max-age=30
+etag: "68286777"
+last-modified: Fri, 28 Aug 2026 17:40:38 GMT
+content-length: 1890
+strict-transport-security: max-age=10886400; includeSubDomains; preload
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
+x-xss-protection: 1; mode=block
+x-dns-prefetch-control: off
+content-security-policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' https://api.sociobot.in; object-src 'none'; base-uri 'self'; form-action 'self' https://api.sociobot.in; frame-ancestors 'none'
+permissions-policy: camera=(), microphone=(), geolocation=(), payment=()
+
+URL https://bills-due-board.sociobot.in/terms
+HTTP/2 200
+content-type: text/html
+date: Fri, 28 Aug 2026 17:56:49 GMT
+cache-control: public, must-revalidate, max-age=30
+etag: "68286777"
+last-modified: Fri, 28 Aug 2026 17:40:38 GMT
+content-length: 1890
+strict-transport-security: max-age=10886400; includeSubDomains; preload
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
+x-xss-protection: 1; mode=block
+x-dns-prefetch-control: off
+content-security-policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' https://api.sociobot.in; object-src 'none'; base-uri 'self'; form-action 'self' https://api.sociobot.in; frame-ancestors 'none'
+permissions-policy: camera=(), microphone=(), geolocation=(), payment=()
+
+URL https://bills-due-board.sociobot.in/not-a-real-route
+HTTP/2 404
+content-type: text/html
+date: Fri, 28 Aug 2026 17:56:50 GMT
+cache-control: public, must-revalidate, max-age=30
+etag: "68286777"
+last-modified: Fri, 28 Aug 2026 17:40:38 GMT
+content-length: 848
+strict-transport-security: max-age=10886400; includeSubDomains; preload
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
+x-xss-protection: 1; mode=block
+x-dns-prefetch-control: off
+content-security-policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' https://api.sociobot.in; object-src 'none'; base-uri 'self'; form-action 'self' https://api.sociobot.in; frame-ancestors 'none'
+permissions-policy: camera=(), microphone=(), geolocation=(), payment=()
+
+URL https://bills-due-board.sociobot.in/sw.js
+HTTP/2 200
+content-type: text/javascript
+date: Fri, 28 Aug 2026 17:56:52 GMT
+cache-control: public, must-revalidate, max-age=30
+etag: "68286777"
+last-modified: Fri, 28 Aug 2026 17:40:38 GMT
+content-length: 1907
+strict-transport-security: max-age=10886400; includeSubDomains; preload
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
+x-xss-protection: 1; mode=block
+x-dns-prefetch-control: off
+content-security-policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' https://api.sociobot.in; object-src 'none'; base-uri 'self'; form-action 'self' https://api.sociobot.in; frame-ancestors 'none'
+permissions-policy: camera=(), microphone=(), geolocation=(), payment=()
+
+URL https://bills-due-board.sociobot.in/assets/index-CNpeEy-G.js
+HTTP/2 200
+content-type: text/javascript
+date: Fri, 28 Aug 2026 17:56:52 GMT
+cache-control: public, must-revalidate, max-age=30
+etag: "68286777"
+last-modified: Fri, 28 Aug 2026 17:40:38 GMT
+content-length: 36885
+strict-transport-security: max-age=10886400; includeSubDomains; preload
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
+x-xss-protection: 1; mode=block
+x-dns-prefetch-control: off
+content-security-policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' https://api.sociobot.in; object-src 'none'; base-uri 'self'; form-action 'self' https://api.sociobot.in; frame-ancestors 'none'
+permissions-policy: camera=(), microphone=(), geolocation=(), payment=()

@@ -1,0 +1,43 @@
+{
+  "status": 200,
+  "url": "https://bills-due-board.sociobot.in/",
+  "title": "Bills Due Board — See bills by due date",
+  "desktop": {
+    "viewport": "1440x900",
+    "h1": "See every bill by due date",
+    "audience": "For solo operators who need one place to review bills and confirm each payment.",
+    "primaryAction": "Try it with sample data",
+    "actionExplanation": "The sample opens a separate demo board.",
+    "facts": [
+      "Works offline after the first visit",
+      "Records use encrypted browser storage",
+      "Free for 10 active bills"
+    ],
+    "primaryActionVisible": true,
+    "consoleErrors": []
+  },
+  "mobile": {
+    "viewport": "390x844",
+    "h1": "See every bill by due date",
+    "audience": "For solo operators who need one place to review bills and confirm each payment.",
+    "primaryAction": "Try it with sample data",
+    "actionExplanation": "The sample opens a separate demo board.",
+    "facts": [
+      "Works offline after the first visit",
+      "Records use encrypted browser storage",
+      "Free for 10 active bills"
+    ],
+    "primaryActionVisible": true,
+    "horizontalOverflow": 0,
+    "consoleErrors": []
+  },
+  "oneClickDemo": {
+    "url": "https://bills-due-board.sociobot.in/demo",
+    "plannedBills": 5,
+    "paidBills": 1,
+    "persistentBanner": "Demo — sample data, nothing is saved to your board",
+    "resetAction": "Reset demo",
+    "realAction": "Start for real"
+  },
+  "result": "PASS"
+}

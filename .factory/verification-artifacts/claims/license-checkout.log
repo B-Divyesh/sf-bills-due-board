@@ -1,0 +1,6 @@
+
+> bills-due-board@1.0.2 verify:checkout
+> node scripts/verify-checkout.mjs
+
+Checkout health check passed: 303 → checkout.dodopayments.com ($19 one-time license)
+EXIT 0
