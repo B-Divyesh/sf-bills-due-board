@@ -1,0 +1,12 @@
+HTTP/1.1 404 Not Found
+ContentType: text/html
+Accept-Ranges: bytes
+Cache-Control: public, max-age=0
+Last-Modified: Fri, 28 Aug 2026 19:35:23 GMT
+ETag: W/"93c-1a049dea830"
+Content-Type: text/html; charset=UTF-8
+Content-Length: 2364
+Date: Fri, 28 Aug 2026 19:40:10 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+

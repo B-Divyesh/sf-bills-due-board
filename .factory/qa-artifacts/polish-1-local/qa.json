@@ -1,0 +1,97 @@
+{
+  "baseUrl": "http://127.0.0.1:4280",
+  "checkedAt": "2026-08-28T19:44:43.460Z",
+  "firstScreen": {
+    "headline": "See every bill by due date",
+    "oneClickDemo": true
+  },
+  "queryDemo": {
+    "title": "Demo — Bills Due Board",
+    "reset": true,
+    "isolatedFromRealBoard": true
+  },
+  "routes": [
+    {
+      "route": "/",
+      "title": "Bills Due Board — See bills by due date",
+      "h1": [
+        "See every bill by due date"
+      ],
+      "main": 1,
+      "description": "Keep planned bills in a private due-date queue, review the next cash week, and confirm each payment.",
+      "canonical": "https://bills-due-board.sociobot.in/",
+      "ogImage": "https://bills-due-board.sociobot.in/assets/social-card.webp",
+      "axeViolations": 0
+    },
+    {
+      "route": "/demo",
+      "title": "Demo — Bills Due Board",
+      "h1": [
+        "Plan bills. Confirm payments."
+      ],
+      "main": 1,
+      "description": "Try a separate Bills Due Board sample with six realistic bills.",
+      "canonical": "https://bills-due-board.sociobot.in/demo",
+      "ogImage": "https://bills-due-board.sociobot.in/assets/social-card.webp",
+      "axeViolations": 0
+    },
+    {
+      "route": "/board",
+      "title": "Your bills — Bills Due Board",
+      "h1": [
+        "Plan bills. Confirm payments."
+      ],
+      "main": 1,
+      "description": "Keep planned bills by due date and confirm each payment on this device.",
+      "canonical": "https://bills-due-board.sociobot.in/board",
+      "ogImage": "https://bills-due-board.sociobot.in/assets/social-card.webp",
+      "axeViolations": 0
+    },
+    {
+      "route": "/privacy",
+      "title": "Privacy — Bills Due Board",
+      "h1": [
+        "Your bills stay in your browser"
+      ],
+      "main": 1,
+      "description": "Read how Bills Due Board stores bill records and checks licenses.",
+      "canonical": "https://bills-due-board.sociobot.in/privacy",
+      "ogImage": "https://bills-due-board.sociobot.in/assets/social-card.webp",
+      "axeViolations": 0
+    },
+    {
+      "route": "/terms",
+      "title": "Terms — Bills Due Board",
+      "h1": [
+        "Terms for using this board"
+      ],
+      "main": 1,
+      "description": "Read the terms for using Bills Due Board and its one-time license.",
+      "canonical": "https://bills-due-board.sociobot.in/terms",
+      "ogImage": "https://bills-due-board.sociobot.in/assets/social-card.webp",
+      "axeViolations": 0
+    }
+  ],
+  "routeFocusAndBack": true,
+  "notFound": {
+    "status": 404,
+    "title": "Page not found — Bills Due Board",
+    "canonical": "https://bills-due-board.sociobot.in/404.html",
+    "ogImage": "https://bills-due-board.sociobot.in/assets/social-card.webp",
+    "twitterCard": "summary_large_image",
+    "manifest": "/manifest.webmanifest",
+    "appleTouch": "/apple-touch-icon.png",
+    "legalLinks": [
+      "Privacy",
+      "Terms",
+      "Built by Param Factory (external site)"
+    ],
+    "axeViolations": 0
+  },
+  "offlineReload": true,
+  "crossOriginRequests": [],
+  "consoleErrors": [],
+  "expected404ConsoleNotice": 1,
+  "pageErrors": [],
+  "failedRequests": []
+}

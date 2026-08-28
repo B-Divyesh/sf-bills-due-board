@@ -460,6 +460,8 @@ test('license label and footer links are visible, touch-sized controls', async (
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/board');
   await expect(page.getByLabel('License token')).toBeVisible();
+  await expect(page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Terms' })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
   const labelBox = await page.locator('label[for="license-token"]').boundingBox();
   expect(labelBox?.height).toBeGreaterThan(0);
   await page.goto('/');
