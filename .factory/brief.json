@@ -1,0 +1,11 @@
+{
+  "slug": "bills-due-board",
+  "title": "Bills Due Board",
+  "summary": "See every bill by due date, then mark it paid.",
+  "territory": "utilities",
+  "user": "A solo operator who records bills in a personal or business finance tool and needs a clear due-date queue.",
+  "smallest_useful_product": "Offline bills board with manual and CSV entry, due-date and cash-week views, attachment links, paid confirmation, and CSV export.",
+  "artifact_class": "pwa-offline",
+  "monetization": "one-time",
+  "constraints": "No bank credentials; encrypted local storage and export; planned bills stay distinct from cleared accounting transactions."
+}
