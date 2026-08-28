@@ -51,7 +51,7 @@ The hero is an abstract still life of paper bill slips orbiting a seven-day date
 
 **Generated source:** `assets/src/payment-horizon.png`, generated 2026-08-28 with the factory Azure image model (`factory-image`) from the prompt above. Original generated asset; no third-party source material. Reviewed for text artifacts, logos, seams, and unintended symbols. Shipping derivatives are compressed WebP files in `public/assets/`.
 
-The Open Graph image is composed locally from the same generated art and product palette. App icons are original vector geometry rendered locally.
+The Open Graph image is composed locally from the same generated art and product palette. The SVG favicon is hand-authored geometry. Install icons crop the generated wheel for continuity.
 
 ## Why it fits
 

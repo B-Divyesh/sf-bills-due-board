@@ -1,0 +1,18 @@
+{
+  "date": "2026-08-28",
+  "url": "http://127.0.0.1:4173/",
+  "tool": "Lighthouse 12.8.2",
+  "mode": "mobile defaults, production preview",
+  "scores": {
+    "performance": 99,
+    "accessibility": 100,
+    "best-practices": 100,
+    "seo": 100
+  },
+  "metrics": {
+    "first-contentful-paint": "0.9 s",
+    "largest-contentful-paint": "2.0 s",
+    "total-blocking-time": "0 ms",
+    "cumulative-layout-shift": 0
+  }
+}

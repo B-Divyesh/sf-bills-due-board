@@ -397,9 +397,9 @@ function downloadCsv(bills: Bill[]): void {
   const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href = url; link.download = `bills-due-board-${todayString()}.csv`; document.body.append(link); link.click(); link.remove(); window.setTimeout(() => URL.revokeObjectURL(url), 1000); showToast(`Exported ${bills.length} ${bills.length === 1 ? 'bill' : 'bills'} to CSV.`);
 }
 
-function showToast(message: string, action?: () => void | Promise<void>): void {
+function showToast(message: string, action?: () => void | Promise<void>, actionLabel = 'Undo'): void {
   document.querySelector('#app-toast')?.remove(); window.clearTimeout(toastTimer);
-  const toast = document.createElement('div'); toast.className = 'toast'; toast.id = 'app-toast'; toast.setAttribute('role', 'status'); toast.innerHTML = `<span>${escapeHtml(message)}</span>${action ? '<button type="button">Undo</button>' : '<button type="button" aria-label="Dismiss message">Close</button>'}`;
+  const toast = document.createElement('div'); toast.className = 'toast'; toast.id = 'app-toast'; toast.setAttribute('role', 'status'); toast.innerHTML = `<span>${escapeHtml(message)}</span>${action ? `<button type="button">${escapeHtml(actionLabel)}</button>` : '<button type="button" aria-label="Dismiss message">Close</button>'}`;
   toast.querySelector('button')?.addEventListener('click', () => { if (action) void action(); toast.remove(); }); document.body.append(toast); toastTimer = window.setTimeout(() => toast.remove(), action ? 8000 : 5000);
 }
 
@@ -434,7 +434,7 @@ function setupPwa(): void {
   window.addEventListener('online', () => { const banner = document.querySelector<HTMLElement>('#offline-banner'); if (banner) banner.hidden = true; showToast('You are back online.'); });
   window.addEventListener('offline', () => { const banner = document.querySelector<HTMLElement>('#offline-banner'); if (banner) banner.hidden = false; });
   if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').then((registration) => {
-    registration.addEventListener('updatefound', () => { const worker = registration.installing; worker?.addEventListener('statechange', () => { if (worker.state === 'installed' && navigator.serviceWorker.controller) showToast('An update is ready. Reload to use it.', () => location.reload()); }); });
+    registration.addEventListener('updatefound', () => { const worker = registration.installing; worker?.addEventListener('statechange', () => { if (worker.state === 'installed' && navigator.serviceWorker.controller) showToast('An update is ready. Reload to use it.', () => location.reload(), 'Reload'); }); });
   }).catch(() => showToast('Offline setup failed. Reload while online to try again.')));
 }
 
