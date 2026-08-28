@@ -41,6 +41,21 @@ await harborRow.getByRole('button', { name: 'Mark paid' }).click();
 await page.getByRole('button', { name: 'Confirm paid' }).click();
 await page.getByRole('button', { name: 'Reset demo' }).click();
 await page.locator('[data-bill-id]').filter({ hasText: 'Harbor Electric' }).waitFor({ state: 'visible' });
+const requestsBeforeTaxRecord = requests.length;
+await page.getByRole('button', { name: 'Add a bill' }).first().click();
+await page.getByLabel('Vendor').fill('County Revenue Office');
+await page.getByLabel('Amount in USD').fill('320.00');
+await page.getByLabel('Due date').fill('2030-04-15');
+await page.getByLabel('Category').selectOption('Tax');
+await page.getByLabel('Notes').fill('Quarterly estimate to review');
+await page.getByRole('button', { name: 'Save bill' }).click();
+const taxRow = page.locator('[data-bill-id]').filter({ hasText: 'County Revenue Office' });
+await taxRow.waitFor({ state: 'visible' });
+check((await taxRow.innerText()).includes('$320.00'), 'Tax-category record was not returned as entered.');
+check(!(await page.locator('main').innerText()).match(/deduct(?:ion|ible)?|write[- ]off|tax rate|filing status|journal entr|you should pay|we recommend/i), 'The board produced advice output.');
+check(requests.length === requestsBeforeTaxRecord, 'Adding a tax-category record made a network request.');
+await page.getByRole('button', { name: 'Reset demo' }).click();
+await page.locator('[data-bill-id]').filter({ hasText: 'Harbor Electric' }).waitFor({ state: 'visible' });
 await page.getByRole('link', { name: 'Start for real' }).click();
 await page.waitForURL('**/board');
 check(await page.getByText('Harbor Electric').count() === 0, 'Demo data leaked into the real board.');
@@ -99,7 +114,7 @@ await offlineContext.close();
 
 const origin = new URL(baseUrl).origin;
 const crossOriginRequests = [...new Set(requests.filter((url) => new URL(url).origin !== origin))];
-const unexpectedConsoleErrors = consoleErrors.filter((message) => !message.includes('status of 404 (Not Found)'));
+const unexpectedConsoleErrors = consoleErrors.filter((message) => !message.includes('status of 404'));
 check(crossOriginRequests.length === 0, `Unexpected cross-origin requests: ${crossOriginRequests.join(', ')}`);
 check(unexpectedConsoleErrors.length === 0 && pageErrors.length === 0 && failedRequests.length === 0, `Browser errors occurred: ${JSON.stringify({ unexpectedConsoleErrors, pageErrors, failedRequests })}`);
 
@@ -107,7 +122,7 @@ const evidence = {
   baseUrl,
   checkedAt: new Date().toISOString(),
   firstScreen: { headline: 'See every bill by due date', oneClickDemo: true },
-  queryDemo: { title: 'Demo — Bills Due Board', reset: true, isolatedFromRealBoard: true },
+  queryDemo: { title: 'Demo — Bills Due Board', reset: true, isolatedFromRealBoard: true, taxAdviceBoundary: true },
   routes: routeEvidence,
   routeFocusAndBack: true,
   notFound: { status: notFoundResponse.status(), ...notFound, axeViolations: notFoundAxe.violations.length },

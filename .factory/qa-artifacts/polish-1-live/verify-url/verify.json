@@ -1,0 +1,14 @@
+{
+  "url": "https://bills-due-board.sociobot.in/?demo=1",
+  "loadMs": 683,
+  "errors": [],
+  "a11y": {
+    "title": "Demo — Bills Due Board",
+    "lang": "en",
+    "h1": 1,
+    "main": true,
+    "imgsMissingAlt": 0,
+    "buttonsUnlabeled": 2,
+    "textLength": 954
+  }
+}
