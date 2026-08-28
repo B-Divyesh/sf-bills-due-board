@@ -1,6 +1,6 @@
 # Bills Due Board — repair 3 handoff
 
-**Status: repaired locally; production deployment verification follows the repair commit.**
+**Status: repaired, verified, pushed, and deployed.**
 
 - Work order: `bills-due-board-repair-3`
 - Repair base/report: `913218ddc8d8d2e3f1a4bf03e4dd6c334e2d261b`
@@ -65,8 +65,26 @@ Use `/demo` for the isolated sample workspace. It stores encrypted sample data i
 
 ## Deployment and live checks
 
-Pending the committed repair deployment. After deployment this section will record the deployed commit, response policy, artifact identity, live accessibility, privacy, offline/update, and route checks.
+- Repair commits: `491ef95` (claims and exact regressions) and `8aaca6b` (44 px target hardening), both pushed to `origin/main`.
+- Deployed 2026-08-28 UTC to the configured Azure Static Web Apps production resource `sf-bills-due-board`; the custom domain is <https://bills-due-board.sociobot.in>.
+- `/`, `/demo`, `/board`, `/privacy`, and `/terms` return HTTP 200. An unknown route returns the styled fallback with HTTP 404.
+- The live root, hashed JS, hashed CSS, `sw.js`, and `manifest.webmanifest` are byte-identical to local `dist/`:
+
+```text
+index.html                       b2a6694fd8f1fb979b5b2a0b4c0bcef7838934b307061ce7e1ee08a3d5695d64
+assets/index-CNpeEy-G.js         0d32925b54a4429fad746cda72fce1a70239746c657e50b68013abd290be4e1d
+assets/index-BiTrG3yN.css        da0186fc96f13cb14b8afa118da51542b286168525128b5de1c722c56fc9d49d
+sw.js                            2fa4d3345c70cb3aefd39e314c227a4a853b00498868a4b2674910e8ac8e0a42
+manifest.webmanifest             0e9ec6e5445b356e1faa4b24ce5751e88f556abc3bfd7781d619ad9d0087a890
+```
+
+- Production `verify-url.sh` passed in 602 ms with the expected title, `lang=en`, one H1, one main, complete alt text, named buttons, and zero console errors. Evidence is in [`.factory/qa-artifacts/repair-3-live/`](qa-artifacts/repair-3-live/).
+- A 12-case live matrix covered all normal routes plus the real 404 at 1440×900 and 390×844. Normal routes had zero console/page/request errors, zero serious/critical Axe issues, zero cross-origin requests, and zero horizontal overflow. The only small-element exception is the intentionally hidden 1×1 file input operated by the visible 46 px **Import CSV** button.
+- The live 390 px keyboard path focused **Add a bill** with a 3 px ochre outline, opened the dialog with Enter, moved focus to Vendor, saved a bill, and retained it after reload. Focused skip and legal email targets now measure exactly 44 px. At 200% text size, horizontal overflow remained zero.
+- Reduced-motion live rendering reports the expected `0.00001s` animation duration. The active service worker is `/sw.js`, its cache is `bills-due-board-shell-v4`, `registration.update()` completes, and an offline reload retains both Harbor Electric and the offline status banner without errors.
+- Live responses include HSTS, restrictive CSP, `nosniff`, strict-origin referrer policy, and a permissions policy disabling camera, microphone, geolocation, and payment. HTML and the worker use 30-second revalidation caching.
+- The final Sociobot checkout check still redirects to the Dodo-hosted Bills Due Board page showing `$19.00` and “One-time license.” No deployment token or provider secret is present in the tree; the CLI-created credential cache was deleted after deployment.
 
 ## Known gaps
 
-None in the repaired product. The pending item is deployment and live verification, not implementation.
+None known.
