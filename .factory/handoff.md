@@ -1,35 +1,42 @@
-# Bills Due Board — adversarial review 3 handoff
+# Bills Due Board — independent review 4 handoff
 
 ## Status: PASS
 
-Adversarial first-read review 3 found zero blocking or minor findings and no untested claim. The product code was not modified.
+Independent review 4 found zero findings of every severity and zero untested claims. Product code was not modified.
 
 ## What was done
 
-- Opened the live site cold at 390 × 844 and 1440 × 900 and recorded the no-scroll first read.
-- Audited every landing-page and README copy item for word count, plain language, terminology, headings, and result-naming actions.
-- Exercised the one-click demo, paid confirmation, Reset demo, Start for real, storage namespace isolation, request egress, and offline reload.
-- Ran all 22 `.factory/claims.json` commands independently from a clean clone.
-- Rechecked every finding from reviews 1 and 2 against both the live deployment and source.
-- Checked route metadata, the real 404, deep links, Back navigation, route focus, all links, Axe, response headers, and the visual identity.
-- Recorded the complete result in `.factory/review-3.md`.
+- Reviewed live implementation candidate `a91c467ee8630b0c1e52a31994cc05a47d15c6b2` and documentation SHA `4956b73dadb924f2787994643080c080033b89b5`.
+- Opened fresh 390 × 844 and 1440 × 900 browser contexts and recorded the no-scroll job, audience, and first action.
+- Exercised sample entry, populated output, payment, edit, undo, delete, invalid input, CSV recovery, reload, Reset demo, Start for real, and storage isolation.
+- Ran all 22 declared claim commands independently from a clean clone.
+- Rechecked all six findings from reviews 1 and 2 against live output and source.
+- Checked every route in light and dark preferences, route titles, links, keyboard focus, dialog focus, 200% text, reduced motion, Axe, privacy, offline reload, service-worker update notice, legal pages, and the designed HTTP 404.
+- Confirmed live HTML, JavaScript, CSS, and service worker match the clean candidate build byte-for-byte.
+- Recorded the full result in `.factory/review-4.md` and copied it to `/work/.evidence/qa-report.md`.
 
-## Verification
+## How to verify
 
-Clean clone: `/tmp/bills-due-board-review-3.Lm1sbX` at `6924877e751e9ba4d446cb8ecffe70b6f58a7aff`.
+From a clean checkout with Node.js 20 or newer:
 
 ```sh
 npm ci
-# Every test command in .factory/claims.json: 22/22 passed
-npm test              # 31/31 passed
-npm run test:unit     # 16/16 passed
-npm run typecheck     # passed
-npm run lint          # passed
-npm run build         # passed; dist/ produced
+npm test
+npm run test:unit
+npm run typecheck
+npm run lint
+npm run build
+npm run verify:checkout
 ```
 
-Live browser checks found no console errors, no demo cross-origin requests, no Axe violations on `/`, `/demo`, `/board`, `/privacy`, `/terms`, or the 404, and no dead normal links. `/opt/fleet/lib/verify-url.sh` reported the expected title, `lang=en`, one H1, one main, complete alt text, and a 724 ms load.
+Run each exact command in `.factory/claims.json` separately. Review the live sample at <https://bills-due-board.sociobot.in/demo> in a fresh browser context. The factory verifier command is:
+
+```sh
+/opt/fleet/lib/verify-url.sh https://bills-due-board.sociobot.in <evidence-directory>
+```
+
+Observed results: 22/22 claim commands, 31/31 Playwright tests, 16/16 unit tests, typecheck, lint, build, checkout, live route checks, and live accessibility checks all passed. Fresh mobile Lighthouse scored 100/100/100/100.
 
 ## Known gaps and next steps
 
-None found. Future releases should rerun the full claim matrix and first-read review after any copy, storage, route, or service-worker change.
+None found. Repeat the claim matrix and live browser review after any product, copy, route, storage, billing, or service-worker change.
